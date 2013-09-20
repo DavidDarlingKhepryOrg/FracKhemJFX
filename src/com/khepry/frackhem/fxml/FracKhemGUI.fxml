@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2013 Khepry Software
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+    http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane prefHeight="800.0" prefWidth="1200.0" xmlns:fx="http://javafx.com/fxml" fx:controller="com.khepry.frackhem.fxml.FracKhemGUIController">
+  <center>
+    <TabPane fx:id="tabPaneCenter" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+      <tabs>
+        <Tab fx:id="tabBlended" text="Blended">
+          <content>
+            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <children>
+                <TextField fx:id="txtFieldQueryText0" onAction="#txtFieldQueryText0_onAction" prefHeight="35.0" prefWidth="900.0" promptText="Enter text for which to search in this text box..." AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                <TextField fx:id="txtFieldQueryStat0" disable="true" editable="false" prefHeight="35.0" prefWidth="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0" />
+                <TableView fx:id="tblViewQueryResults0" prefHeight="675.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="70.0" />
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+        <Tab fx:id="tabChemicals" text="Chemicals">
+          <content>
+            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <children>
+                <TextField fx:id="txtFieldQueryText1" onAction="#txtFieldQueryText1_onAction" prefHeight="35.0" prefWidth="900.0" promptText="Enter text for which to search in this text box..." AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                <TextField fx:id="txtFieldQueryStat1" disable="true" editable="false" prefHeight="35.0" prefWidth="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0" />
+                <TableView fx:id="tblViewQueryResults1" prefHeight="675.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="70.0" />
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+        <Tab fx:id="tabReports" text="Reports">
+          <content>
+            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <children>
+                <TextField fx:id="txtFieldQueryText2" onAction="#txtFieldQueryText2_onAction" prefHeight="35.0" prefWidth="900.0" promptText="Enter text for which to search in this text box..." AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                <TextField fx:id="txtFieldQueryStat2" disable="true" editable="false" prefHeight="35.0" prefWidth="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0" />
+                <TableView fx:id="tblViewQueryResults2" prefHeight="675.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="70.0" />
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+        <Tab fx:id="tabToxicities" text="Toxicities">
+          <content>
+            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <children>
+                <TextField fx:id="txtFieldQueryText3" onAction="#txtFieldQueryText3_onAction" prefHeight="35.0" prefWidth="900.0" promptText="Enter text for which to search in this text box..." AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                <TextField fx:id="txtFieldQueryStat3" disable="true" editable="false" prefHeight="35.0" prefWidth="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0" />
+                <TableView fx:id="tblViewQueryResults3" prefHeight="675.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="70.0" />
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+        <Tab fx:id="tabResults" text="Results">
+          <content>
+            <AnchorPane id="Results" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <children>
+                <TextArea fx:id="txtAreaQueryResults" prefHeight="745.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+      </tabs>
+    </TabPane>
+  </center>
+  <left>
+    <ScrollPane fx:id="scrollPaneOperators" prefWidth="150.0">
+      <Accordion fx:id="accordionOperators" />
+    </ScrollPane>
+  </left>
+  <right>
+    <ScrollPane fx:id="scrollPaneToxicities" prefWidth="150.0">
+      <Accordion fx:id="accordionToxicities" />
+    </ScrollPane>
+  </right>
+  <top>
+    <MenuBar>
+      <menus>
+        <Menu mnemonicParsing="false" text="File">
+          <items>
+            <MenuItem mnemonicParsing="false" onAction="#onMnuFileNew" text="New..." />
+            <MenuItem mnemonicParsing="false" onAction="#onMnuFileOpen" text="Open..." />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <Menu text="Recent" fx:id="mnuFileRecent" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" onAction="#onMnuFileSave" text="Save" />
+            <MenuItem mnemonicParsing="false" onAction="#onMnuFileSaveAs" text="Save As..." />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <Menu text="Export">
+              <items>
+                <MenuItem mnemonicParsing="false" onAction="#onMnuFileExportAsHTML" text="as HTML..." />
+                <MenuItem mnemonicParsing="false" onAction="#onMnuFileExportAsPDF" text="as PDF..." />
+              </items>
+            </Menu>
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" onAction="#onMnuFileClose" text="Close" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Lucene">
+          <items>
+            <MenuItem mnemonicParsing="false" onAction="#onMnuIndexBlendeds" text="Index Blendeds using Lucene" />
+            <MenuItem mnemonicParsing="false" onAction="#onMnuIndexChemicals" text="Index Chemicals using Lucene" />
+            <MenuItem mnemonicParsing="false" onAction="#onMnuIndexReports" text="Index Reports using Lucene" />
+            <MenuItem mnemonicParsing="false" onAction="#onMnuIndexToxicities" text="Index Toxicities using Lucene" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" onAction="#onMnuClearBlendedsLuceneIndex" text="Clear Blendeds Lucene Index" />
+            <MenuItem mnemonicParsing="false" onAction="#onMnuClearChemicalsLuceneIndex" text="Clear Chemicals Lucene Index" />
+            <MenuItem mnemonicParsing="false" onAction="#onMnuClearReportsLuceneIndex" text="Clear Reports Lucene Index" />
+            <MenuItem mnemonicParsing="false" onAction="#onMnuClearToxicitiesLuceneIndex" text="Clear Toxicities Lucene Index" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Help">
+          <items>
+            <MenuItem mnemonicParsing="false" text="About" />
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
+  </top>
+</BorderPane>
