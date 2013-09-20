@@ -77,7 +77,7 @@ public class Chemicals<E> implements ObservableList<E> {
 		String[] keyValuePairs = properties.split(";");
 		for (String keyValuePair : keyValuePairs) {
 			String[] kvs = keyValuePair.split(",");
-			TableColumn tableColumn = new TableColumn(kvs[0]);
+			TableColumn tableColumn = new TableColumn(kvs[0] + "\n(" + kvs[1] + ")");
 			tableColumn.setCellValueFactory(new PropertyValueFactory<Report, String>(kvs[1]));
 			list.add(tableColumn);
 		}
