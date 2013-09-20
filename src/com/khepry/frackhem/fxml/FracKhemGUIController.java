@@ -158,7 +158,7 @@ public class FracKhemGUIController {
 	private TableView tblViewQueryResults3;
 
 	@FXML
-	private TextArea txtAreaQueryResults;
+	private TextArea txtAreaMessages;
 
 	@FXML
 	private TextArea titledPaneTags;
@@ -178,7 +178,7 @@ public class FracKhemGUIController {
 	@FXML
 	private Tab tabToxicitiess;
 	@FXML
-	private Tab tabResults;
+	private Tab tabMessages;
 	
 	private Integer maxDocs = 50000;
 	
@@ -305,8 +305,8 @@ public class FracKhemGUIController {
 			try {
 				text = loadFileAsText(file);
 				if (text != null) {
-					if (txtAreaQueryResults != null) {
-						txtAreaQueryResults.setText(text);
+					if (txtAreaMessages != null) {
+						txtAreaMessages.setText(text);
 					}
 				}
 			} catch (IOException e) {
@@ -319,7 +319,7 @@ public class FracKhemGUIController {
 		System.out.println(progressMessageQueueName + " was initialized!");
 
 		// instantiate a message queue monitor for the progress message queue
-		MessageQueueMonitor progressQueueMonitor = new MessageQueueMonitor(progressMessageQueue, 100L, txtAreaQueryResults);
+		MessageQueueMonitor progressQueueMonitor = new MessageQueueMonitor(progressMessageQueue, 100L, txtAreaMessages);
 		Thread thread = new Thread(progressQueueMonitor, progressMessageQueueName);
 		messageQueueMonitors.put(thread.getName(), progressQueueMonitor);
 		messageQueueMonitorThreads.add(thread);
@@ -354,8 +354,8 @@ public class FracKhemGUIController {
 	
 	@FXML
 	private void onMnuFileNew(ActionEvent event) {
-		if (txtAreaQueryResults != null) {
-			txtAreaQueryResults.setText("");
+		if (txtAreaMessages != null) {
+			txtAreaMessages.setText("");
 		}
 		propFileCurrFileVal = "";
 	}
@@ -383,8 +383,8 @@ public class FracKhemGUIController {
 		else {
 			try {
 				File file = new File(propFileCurrFileVal);
-				if (txtAreaQueryResults != null) {
-					saveTextAsFile(txtAreaQueryResults.getText().trim(), file);
+				if (txtAreaMessages != null) {
+					saveTextAsFile(txtAreaMessages.getText().trim(), file);
 				}
 				System.out.println("Properties file: " + file.getCanonicalPath() + " was saved.");
 				savePreferences();
@@ -407,8 +407,8 @@ public class FracKhemGUIController {
 		if (file != null) {
 			try {
 				try {
-					if (txtAreaQueryResults != null) {
-						saveTextAsFile(txtAreaQueryResults.getText().trim(), file);
+					if (txtAreaMessages != null) {
+						saveTextAsFile(txtAreaMessages.getText().trim(), file);
 					}
 				} catch (IOException e) {
 					e.printStackTrace(System.err);
@@ -447,8 +447,8 @@ public class FracKhemGUIController {
             prevPathHtmlVal = file.getParent();
             stage.getScene().setCursor(Cursor.WAIT);
             try {
-            	if (txtAreaQueryResults != null) {
-            		saveTextAsHTML(txtAreaQueryResults.getText(), file);
+            	if (txtAreaMessages != null) {
+            		saveTextAsHTML(txtAreaMessages.getText(), file);
             	}
 			} catch (DocumentException | IOException | InterruptedException e) {
 				e.printStackTrace(System.err);
@@ -479,8 +479,8 @@ public class FracKhemGUIController {
             prevPathPdfVal = file.getParent();
             stage.getScene().setCursor(Cursor.WAIT);
             try {
-            	if (txtAreaQueryResults != null) {
-            		saveTextAsPDF(txtAreaQueryResults.getText(), file);
+            	if (txtAreaMessages != null) {
+            		saveTextAsPDF(txtAreaMessages.getText(), file);
             	}
 			} catch (DocumentException | IOException | InterruptedException e) {
 				e.printStackTrace(System.err);
@@ -493,8 +493,8 @@ public class FracKhemGUIController {
     
     @FXML
     private void onMnuIndexBlendeds(ActionEvent event) {
-    	tabPaneCenter.getSelectionModel().select(tabResults);
-    	txtAreaQueryResults.clear();
+    	tabPaneCenter.getSelectionModel().select(tabMessages);
+    	txtAreaMessages.clear();
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -511,14 +511,14 @@ public class FracKhemGUIController {
 					String indexFields = "toxCasEdfId,toxChemicalName,toxRecognized,toxSuspected";
 					Integer progressInterval = 100;
 					LuceneIndex luceneIndex = new LuceneIndex(progressMessageQueue);
-					luceneIndex.load(txtPath, colSeparator, indexPath, indexFields, progressInterval, txtAreaQueryResults);
+					luceneIndex.load(txtPath, colSeparator, indexPath, indexFields, progressInterval, txtAreaMessages);
 					message = "Ended Indexing Toxicities via Lucene!";
 					System.out.println(message);
-					txtAreaQueryResults.appendText(System.lineSeparator() + message);
+					txtAreaMessages.appendText(System.lineSeparator() + message);
 					// index chemicals
 			    	message = "Start Indexing Blendeds via Lucene...";
 			    	System.out.println(message);
-					txtAreaQueryResults.setText(message);
+					txtAreaMessages.setText(message);
 					txtPath = "data/2013_FracKhem_Blendeds.txt";
 					colSeparator = "\t";
 					indexPath = "lucene/blendeds";
@@ -528,7 +528,7 @@ public class FracKhemGUIController {
 					progressInterval = 10000;
 					List<org.apache.lucene.document.Document> documents = luceneIndex.query("lucene/toxicities", "text", "*", maxDocs, Boolean.TRUE);
 					Map<String,Toxicity> toxicities = new Toxicities(documents).getToxicitiesMap();
-					luceneIndex.load(txtPath, colSeparator, indexPath, indexFields, progressInterval, txtAreaQueryResults, toxicities);
+					luceneIndex.load(txtPath, colSeparator, indexPath, indexFields, progressInterval, txtAreaMessages, toxicities);
 					message = "Ended Indexing Blendeds via Lucene!";
 //					System.out.println(message);
 					progressMessageQueue.send(new MessageInput(message));
@@ -545,8 +545,8 @@ public class FracKhemGUIController {
     
     @FXML
     private void onMnuIndexChemicals(ActionEvent event) {
-    	tabPaneCenter.getSelectionModel().select(tabResults);
-    	txtAreaQueryResults.clear();
+    	tabPaneCenter.getSelectionModel().select(tabMessages);
+    	txtAreaMessages.clear();
 		new Thread(new Runnable() {
 
 			@Override
@@ -564,14 +564,14 @@ public class FracKhemGUIController {
 					String indexFields = "toxCasEdfId,toxChemicalName,toxRecognized,toxSuspected";
 					Integer progressInterval = 100;
 					LuceneIndex luceneIndex = new LuceneIndex(progressMessageQueue);
-					luceneIndex.load(txtPath, colSeparator, indexPath, indexFields, progressInterval, txtAreaQueryResults);
+					luceneIndex.load(txtPath, colSeparator, indexPath, indexFields, progressInterval, txtAreaMessages);
 					message = "Ended Indexing Toxicities via Lucene!";
 					System.out.println(message);
-					txtAreaQueryResults.appendText(System.lineSeparator() + message);
+					txtAreaMessages.appendText(System.lineSeparator() + message);
 					// index chemicals
 					message = "Start Indexing Chemicals via Lucene...";
 			    	System.out.println(message);
-					txtAreaQueryResults.setText(message);
+					txtAreaMessages.setText(message);
 					txtPath = "data/2013_FracKhem_Blendeds.txt";
 					colSeparator = "\t";
 					indexPath = "lucene/chemicals";
@@ -581,7 +581,7 @@ public class FracKhemGUIController {
 					progressInterval = 10000;
 					List<org.apache.lucene.document.Document> documents = luceneIndex.query("lucene/toxicities", "text", "*", maxDocs, Boolean.TRUE);
 					Map<String,Toxicity> toxicities = new Toxicities(documents).getToxicitiesMap();
-					luceneIndex.load(txtPath, colSeparator, indexPath, indexFields, progressInterval, txtAreaQueryResults, toxicities);
+					luceneIndex.load(txtPath, colSeparator, indexPath, indexFields, progressInterval, txtAreaMessages, toxicities);
 					message = "Ended Indexing Chemicals via Lucene!";
 //					System.out.println(message);
 					progressMessageQueue.send(new MessageInput(message));
@@ -598,8 +598,8 @@ public class FracKhemGUIController {
     
     @FXML
     private void onMnuIndexReports(ActionEvent event) {
-    	tabPaneCenter.getSelectionModel().select(tabResults);
-    	txtAreaQueryResults.clear();
+    	tabPaneCenter.getSelectionModel().select(tabMessages);
+    	txtAreaMessages.clear();
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -616,14 +616,14 @@ public class FracKhemGUIController {
 					String indexFields = "toxCasEdfId,toxChemicalName,toxRecognized,toxSuspected";
 					Integer progressInterval = 100;
 					LuceneIndex luceneIndex = new LuceneIndex(progressMessageQueue);
-					luceneIndex.load(txtPath, colSeparator, indexPath, indexFields, progressInterval, txtAreaQueryResults);
+					luceneIndex.load(txtPath, colSeparator, indexPath, indexFields, progressInterval, txtAreaMessages);
 					message = "Ended Indexing Toxicities via Lucene!";
 					System.out.println(message);
-					txtAreaQueryResults.appendText(System.lineSeparator() + message);
+					txtAreaMessages.appendText(System.lineSeparator() + message);
 					// index reports
 			    	message = "Start Indexing Reports via Lucene...";
 			    	System.out.println(message);
-					txtAreaQueryResults.setText(message);
+					txtAreaMessages.setText(message);
 					txtPath = "data/2013_FracKhem_Blendeds.txt";
 					colSeparator = "\t";
 					indexPath = "lucene/reports";
@@ -634,7 +634,7 @@ public class FracKhemGUIController {
 					progressInterval = 10000;
 					List<org.apache.lucene.document.Document> documents = luceneIndex.query("lucene/toxicities", "text", "*", maxDocs, Boolean.TRUE);
 					Map<String,Toxicity> toxicities = new Toxicities(documents).getToxicitiesMap();
-					luceneIndex.load(txtPath, colSeparator, indexPath, indexFields, casEdfIdFieldName, taxonomyPath, progressInterval, txtAreaQueryResults, toxicities, levelFields, "toxRecognized", "toxSuspected");
+					luceneIndex.load(txtPath, colSeparator, indexPath, indexFields, casEdfIdFieldName, taxonomyPath, progressInterval, txtAreaMessages, toxicities, levelFields, "toxRecognized", "toxSuspected");
 					message = "Ended Indexing Reports via Lucene!";
 //					System.out.println(message);
 					progressMessageQueue.send(new MessageInput(message));
@@ -651,8 +651,8 @@ public class FracKhemGUIController {
     
     @FXML
     private void onMnuIndexToxicities(ActionEvent event) {
-    	tabPaneCenter.getSelectionModel().select(tabResults);
-    	txtAreaQueryResults.clear();
+    	tabPaneCenter.getSelectionModel().select(tabMessages);
+    	txtAreaMessages.clear();
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -668,7 +668,7 @@ public class FracKhemGUIController {
 					String indexFields = "toxCasEdfId,toxChemicalName,toxRecognized,toxSuspected";
 					Integer progressInterval = 100;
 					LuceneIndex luceneIndex = new LuceneIndex(progressMessageQueue);
-					luceneIndex.load(txtPath, colSeparator, indexPath, indexFields, progressInterval, txtAreaQueryResults);
+					luceneIndex.load(txtPath, colSeparator, indexPath, indexFields, progressInterval, txtAreaMessages);
 					message = "Ended Indexing Toxicities via Lucene!";
 //					System.out.println(message);
 					progressMessageQueue.send(new MessageInput(message));
@@ -931,8 +931,8 @@ public class FracKhemGUIController {
 				propFileCurrPathVal = file.getParent() + "";
 				System.out.println("Properties file: " + file.getCanonicalPath() + " was loaded.");
 				String text = loadFileAsText(file);
-				if (txtAreaQueryResults != null) {
-					txtAreaQueryResults.setText(text);
+				if (txtAreaMessages != null) {
+					txtAreaMessages.setText(text);
 				}
 				savePreferences();
 			} catch (IOException e) {
