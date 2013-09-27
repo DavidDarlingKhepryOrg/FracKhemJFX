@@ -34,8 +34,15 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.facet.index.FacetFields;
+import org.apache.lucene.facet.params.FacetSearchParams;
+import org.apache.lucene.facet.search.CountFacetRequest;
+import org.apache.lucene.facet.search.FacetRequest;
+import org.apache.lucene.facet.search.FacetResult;
+import org.apache.lucene.facet.search.FacetsCollector;
 import org.apache.lucene.facet.taxonomy.CategoryPath;
+import org.apache.lucene.facet.taxonomy.TaxonomyReader;
 import org.apache.lucene.facet.taxonomy.TaxonomyWriter;
+import org.apache.lucene.facet.taxonomy.directory.DirectoryTaxonomyReader;
 import org.apache.lucene.facet.taxonomy.directory.DirectoryTaxonomyWriter;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -46,11 +53,14 @@ import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.MultiCollector;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.TopFieldCollector;
+import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.apache.lucene.util.Version;
@@ -94,7 +104,7 @@ public class LuceneIndex {
 		
 		luceneIndex.load(txtPath, colSeparator, indexPath, indexFields, progressInterval, new TextArea());
 		
-		List<Document> documents = luceneIndex.query(indexPath, "text", "Arkansas", 100, false);
+		List<Document> documents = luceneIndex.query(indexPath, "text", "Arkansas", 100, false, "");
 		System.out.println("Documents found: " + documents.size());
 		
 		for (Document document : documents) {
@@ -568,6 +578,8 @@ public class LuceneIndex {
 				
 				analyzer.close();
 				indexDirectory.close();
+				
+				taxonomyWriter.commit();
 				taxonomyWriter.close();
 				taxonomyDirectory.close();
 			}
@@ -751,7 +763,7 @@ public class LuceneIndex {
 			String queryText,
 			Integer maxDocs,
 			Boolean allowLeadingWildcard) throws IOException, ParseException {
-		return query(indexPath, field, queryText, maxDocs, allowLeadingWildcard);
+		return query(indexPath, field, queryText, maxDocs, allowLeadingWildcard, "");
 	}
 
 	
@@ -761,40 +773,96 @@ public class LuceneIndex {
 			String queryText,
 			Integer maxDocs,
 			Boolean allowLeadingWildcard,
+			String taxonomyPath,
 			String... sortColumns ) throws IOException, ParseException {
 		List<Document> documents = new ArrayList<>();
-		File indexFile = new File(indexPath);
-		if (indexFile.exists()) {
-			IndexReader reader = DirectoryReader.open(FSDirectory.open(indexFile));
-			IndexSearcher searcher = new IndexSearcher(reader);
-			Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_44);
-			QueryParser parser = new QueryParser(Version.LUCENE_44, field, analyzer);
-			parser.setAllowLeadingWildcard(allowLeadingWildcard);
-			Query query = parser.parse(queryText);
-			SortField[] sortFields = new SortField[sortColumns.length];
-			String[] pieces;
-			for (int i = 0; i < sortColumns.length; i++) {
-				pieces = sortColumns[i].split(":");
-				if (pieces.length > 1) {
-					switch (pieces[1].toLowerCase()) {
-					case "integer":
-						sortFields[i] = new SortField(sortColumns[i], SortField.Type.INT);
-						break;
-					default:
+		// if no faceting path is specified
+		if (taxonomyPath.equals("")) {
+			System.out.println("Searching Without Faceting");
+			File indexFile = new File(indexPath);
+			if (indexFile.exists()) {
+				IndexReader indexReader = DirectoryReader.open(FSDirectory.open(indexFile));
+				IndexSearcher indexSearcher = new IndexSearcher(indexReader);
+				Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_44);
+				QueryParser parser = new QueryParser(Version.LUCENE_44, field, analyzer);
+				parser.setAllowLeadingWildcard(allowLeadingWildcard);
+				Query query = parser.parse(queryText);
+				SortField[] sortFields = new SortField[sortColumns.length];
+				String[] pieces;
+				for (int i = 0; i < sortColumns.length; i++) {
+					pieces = sortColumns[i].split(":");
+					if (pieces.length > 1) {
+						switch (pieces[1].toLowerCase()) {
+						case "integer":
+							sortFields[i] = new SortField(sortColumns[i], SortField.Type.INT);
+							break;
+						default:
+							sortFields[i] = new SortField(sortColumns[i], SortField.Type.STRING);
+							break;
+						}
+					}
+					else {
 						sortFields[i] = new SortField(sortColumns[i], SortField.Type.STRING);
-						break;
 					}
 				}
-				else {
-					sortFields[i] = new SortField(sortColumns[i], SortField.Type.STRING);
+				TopDocs topDocs = sortFields.length > 0 ? indexSearcher.search(query, maxDocs, new Sort(sortFields)) : indexSearcher.search(query, maxDocs);
+				for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
+					documents.add(indexSearcher.doc(scoreDoc.doc));
+				}
+				analyzer.close();
+				indexReader.close();
+			}
+		}
+		else {
+			System.out.println("Searching with Faceting");
+			File taxonomyFile = new File(taxonomyPath);
+			if (taxonomyFile.exists()) {
+				File indexFile = new File(indexPath);
+				if (indexFile.exists()) {
+					IndexReader indexReader = DirectoryReader.open(FSDirectory.open(indexFile));
+					IndexSearcher indexSearcher = new IndexSearcher(indexReader);
+					Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_44);
+					QueryParser parser = new QueryParser(Version.LUCENE_44, field, analyzer);
+					parser.setAllowLeadingWildcard(allowLeadingWildcard);
+					Query query = parser.parse(queryText);
+					SortField[] sortFields = new SortField[sortColumns.length];
+					String[] pieces;
+					for (int i = 0; i < sortColumns.length; i++) {
+						pieces = sortColumns[i].split(":");
+						if (pieces.length > 1) {
+							switch (pieces[1].toLowerCase()) {
+							case "integer":
+								sortFields[i] = new SortField(sortColumns[i], SortField.Type.INT);
+								break;
+							default:
+								sortFields[i] = new SortField(sortColumns[i], SortField.Type.STRING);
+								break;
+							}
+						}
+						else {
+							sortFields[i] = new SortField(sortColumns[i], SortField.Type.STRING);
+						}
+					}
+					Sort sort = new Sort(sortFields);
+					TaxonomyReader taxonomyReader = new DirectoryTaxonomyReader(FSDirectory.open(taxonomyFile));
+					List<FacetRequest> categories = new ArrayList<>();
+					categories.add(new CountFacetRequest(new CategoryPath("toxRecognized"), 20));
+					categories.add(new CountFacetRequest(new CategoryPath("toxSuspected"), 20));
+					FacetSearchParams facetSearchParams = new FacetSearchParams(categories);
+					FacetsCollector facetsCollector = FacetsCollector.create(facetSearchParams, indexReader, taxonomyReader);
+					TopFieldCollector topFieldCollector = TopFieldCollector.create(sort, maxDocs, true, false, false, false);
+					indexSearcher.search(query, MultiCollector.wrap(topFieldCollector, facetsCollector));
+					for (ScoreDoc scoreDoc : topFieldCollector.topDocs().scoreDocs) {
+						documents.add(indexSearcher.doc(scoreDoc.doc));
+					}
+					for (FacetResult facetResult : facetsCollector.getFacetResults()) {
+						System.err.println(facetResult.getFacetResultNode().label + ": " + facetResult.getFacetResultNode().value);
+					}
+					analyzer.close();
+					indexReader.close();
+					taxonomyReader.close();
 				}
 			}
-			TopDocs topDocs = sortFields.length > 0 ? searcher.search(query, maxDocs, new Sort(sortFields)) : searcher.search(query, maxDocs);
-			for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
-				documents.add(searcher.doc(scoreDoc.doc));
-			}
-			analyzer.close();
-			reader.close();
 		}
 		return documents;
 	}

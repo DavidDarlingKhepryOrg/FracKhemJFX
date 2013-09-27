@@ -526,7 +526,7 @@ public class FracKhemGUIController {
 					String taxonomyPath = "lucene/taxonomies";
 					String casEdfIdFieldName =  "chmCasEdfId";
 					progressInterval = 10000;
-					List<org.apache.lucene.document.Document> documents = luceneIndex.query("lucene/toxicities", "text", "*", maxDocs, Boolean.TRUE);
+					List<org.apache.lucene.document.Document> documents = luceneIndex.query("lucene/toxicities", "text", "*", maxDocs, Boolean.TRUE, "");
 					Map<String,Toxicity> toxicities = new Toxicities(documents).getToxicitiesMap();
 					luceneIndex.load(txtPath, colSeparator, indexPath, indexFields, progressInterval, txtAreaMessages, toxicities);
 					message = "Ended Indexing Blendeds via Lucene!";
@@ -579,7 +579,7 @@ public class FracKhemGUIController {
 					String taxonomyPath = "lucene/taxonomies";
 					String casEdfIdFieldName =  "chmCasEdfId";
 					progressInterval = 10000;
-					List<org.apache.lucene.document.Document> documents = luceneIndex.query("lucene/toxicities", "text", "*", maxDocs, Boolean.TRUE);
+					List<org.apache.lucene.document.Document> documents = luceneIndex.query("lucene/toxicities", "text", "*", maxDocs, Boolean.TRUE, "");
 					Map<String,Toxicity> toxicities = new Toxicities(documents).getToxicitiesMap();
 					luceneIndex.load(txtPath, colSeparator, indexPath, indexFields, progressInterval, txtAreaMessages, toxicities);
 					message = "Ended Indexing Chemicals via Lucene!";
@@ -632,7 +632,7 @@ public class FracKhemGUIController {
 					String taxonomyPath = "lucene/taxonomies";
 					String casEdfIdFieldName =  "chmCasEdfId";
 					progressInterval = 10000;
-					List<org.apache.lucene.document.Document> documents = luceneIndex.query("lucene/toxicities", "text", "*", maxDocs, Boolean.TRUE);
+					List<org.apache.lucene.document.Document> documents = luceneIndex.query("lucene/toxicities", "text", "*", maxDocs, Boolean.TRUE, "");
 					Map<String,Toxicity> toxicities = new Toxicities(documents).getToxicitiesMap();
 					luceneIndex.load(txtPath, colSeparator, indexPath, indexFields, casEdfIdFieldName, taxonomyPath, progressInterval, txtAreaMessages, toxicities, levelFields, "toxRecognized", "toxSuspected");
 					message = "Ended Indexing Reports via Lucene!";
@@ -730,12 +730,13 @@ public class FracKhemGUIController {
 		String indexPath = "lucene/blendeds";
 		String queryField = "text";
 		String queryText = txtFieldQueryText0.getText().trim();
+		String taxonomyPath = "lucene/taxonomies";
 		stage.getScene().setCursor(Cursor.WAIT);
 		try {
 		    LuceneIndex luceneIndex = new LuceneIndex();
 			List<org.apache.lucene.document.Document> documents;
 			Long bgnMillis = System.currentTimeMillis();
-			documents = luceneIndex.query(indexPath, queryField, queryText, maxDocs, Boolean.FALSE, "rptPdfSeqId", "chmRow:Integer");
+			documents = luceneIndex.query(indexPath, queryField, queryText, maxDocs, Boolean.FALSE, taxonomyPath, "rptPdfSeqId", "chmRow:Integer");
 			Long endMillis = System.currentTimeMillis();
 			Long elapsedMillis = endMillis - bgnMillis;
 			String statText = documents.size() + " disclosed reports+chemicals retrieved in " + (elapsedMillis * 1.0 / 1000) + " seconds (" + df.format((documents.size() * 1000.0) / elapsedMillis) + " records/second).";
@@ -771,12 +772,13 @@ public class FracKhemGUIController {
 		String indexPath = "lucene/chemicals";
 		String queryField = "text";
 		String queryText = txtFieldQueryText1.getText().trim();
+		String taxonomyPath = "lucene/taxonomies";
 		stage.getScene().setCursor(Cursor.WAIT);
 		try {
 		    LuceneIndex luceneIndex = new LuceneIndex();
 			List<org.apache.lucene.document.Document> documents;
 			Long bgnMillis = System.currentTimeMillis();
-			documents = luceneIndex.query(indexPath, queryField, queryText, maxDocs, Boolean.FALSE, "rptPdfSeqId", "chmRow:Integer");
+			documents = luceneIndex.query(indexPath, queryField, queryText, maxDocs, Boolean.FALSE, taxonomyPath, "rptPdfSeqId", "chmRow:Integer");
 			Long endMillis = System.currentTimeMillis();
 			Long elapsedMillis = endMillis - bgnMillis;
 			String statText = documents.size() + " disclosed chemicals retrieved in " + (elapsedMillis * 1.0 / 1000) + " seconds (" + df.format((documents.size() * 1000.0) / elapsedMillis) + " records/second).";
@@ -812,12 +814,13 @@ public class FracKhemGUIController {
 		String indexPath = "lucene/reports";
 		String queryField = "text";
 		String queryText = txtFieldQueryText2.getText().trim();
+		String taxonomyPath = "lucene/taxonomies";
 		stage.getScene().setCursor(Cursor.WAIT);
 		try {
 		    LuceneIndex luceneIndex = new LuceneIndex();
 			List<org.apache.lucene.document.Document> documents;
 			Long bgnMillis = System.currentTimeMillis();
-			documents = luceneIndex.query(indexPath, queryField, queryText, maxDocs, Boolean.FALSE, "rptPdfSeqId");
+			documents = luceneIndex.query(indexPath, queryField, queryText, maxDocs, Boolean.FALSE, taxonomyPath, "rptPdfSeqId");
 			Long endMillis = System.currentTimeMillis();
 			Long elapsedMillis = endMillis - bgnMillis;
 			String statText = documents.size() + " disclosed reports retrieved in " + (elapsedMillis * 1.0 / 1000) + " seconds (" + df.format((documents.size() * 1000.0) / elapsedMillis) + " records/second).";
