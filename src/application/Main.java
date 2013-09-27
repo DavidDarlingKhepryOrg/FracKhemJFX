@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package com.khepry.frackhem.fxml;
+package application;
 	
 
 import java.awt.AWTException;
@@ -41,6 +41,7 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
+import com.khepry.frackhem.fxml.FracKhemGUIController;
 import com.khepry.utilities.GenericUtilities;
 
 public class Main extends Application {
