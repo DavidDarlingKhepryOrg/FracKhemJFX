@@ -5,6 +5,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.lucene.document.Document;
 import org.apache.lucene.facet.search.FacetResult;
 import org.apache.lucene.facet.search.FacetsCollector;
 import org.apache.lucene.search.ScoreDoc;
@@ -14,6 +15,7 @@ public class QueryResult {
 
 	private TopFieldCollector topFieldCollector;
 	private FacetsCollector facetsCollector;
+	private List<Document> documents = new ArrayList<>();
 	
 	private Long bgnTime = System.currentTimeMillis();
 	
@@ -31,6 +33,7 @@ public class QueryResult {
 	public void clear(TopFieldCollector topFieldCollector) {
 		this.topFieldCollector = topFieldCollector;
 		facetsCollector.reset();
+		documents.clear();
 	}
 	
 	public String getCommentary() {
@@ -116,5 +119,13 @@ public class QueryResult {
 
 	public void setBgnTime(Long bgnTime) {
 		this.bgnTime = bgnTime;
+	}
+
+	public List<Document> getDocuments() {
+		return documents;
+	}
+
+	public void setDocuments(List<Document> documents) {
+		this.documents = documents;
 	}
 }

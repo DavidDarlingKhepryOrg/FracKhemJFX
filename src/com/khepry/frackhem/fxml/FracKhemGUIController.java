@@ -48,6 +48,7 @@ import com.khepry.frackhem.entities.Blended;
 import com.khepry.frackhem.entities.Blendeds;
 import com.khepry.frackhem.entities.Chemical;
 import com.khepry.frackhem.entities.Chemicals;
+import com.khepry.frackhem.entities.QueryResult;
 import com.khepry.frackhem.entities.Report;
 import com.khepry.frackhem.entities.Reports;
 import com.khepry.frackhem.entities.Toxicities;
@@ -103,7 +104,10 @@ public class FracKhemGUIController {
 
 	private Integer recentPropFilesMaxSize = 10;
     private List<String> recentPropFilesLst = new ArrayList<>();
-	
+    
+	private Integer maxToxicities = 10000;
+
+
 	private Stage stage;
 	
 	@FXML
@@ -500,38 +504,37 @@ public class FracKhemGUIController {
 			public void run() {
 	            stage.getScene().setCursor(Cursor.WAIT);
 				try {
-			    	String message;
-			    	// index toxicities
-			    	message = "Start Indexing Toxicities via Lucene...";
-//			    	System.out.println(message);
-					progressMessageQueue.send(new MessageInput(message));
-					String txtPath = "data/scorecard-goodguide-toxicities-grouped.txt";
-					String colSeparator = "\t";
-					String indexPath = "lucene/toxicities";
-					String indexFields = "toxCasEdfId,toxChemicalName,toxRecognized,toxSuspected";
-					Integer progressInterval = 100;
-					LuceneIndex luceneIndex = new LuceneIndex(progressMessageQueue);
-					luceneIndex.load(txtPath, colSeparator, indexPath, indexFields, progressInterval, txtAreaMessages);
-					message = "Ended Indexing Toxicities via Lucene!";
-					System.out.println(message);
-					txtAreaMessages.appendText(System.lineSeparator() + message);
-					// index chemicals
-			    	message = "Start Indexing Blendeds via Lucene...";
-			    	System.out.println(message);
-					txtAreaMessages.setText(message);
-					txtPath = "data/2013_FracKhem_Blendeds.txt";
-					colSeparator = "\t";
-					indexPath = "lucene/blendeds";
-					indexFields = "rptPdfSeqId,rptAPI,rptState,rptCounty,rptOperator,rptWellName,chmCasEdfId,chmTradeName,chmSupplier,chmPurpose,chmIngredients,chmComments,rptFractureDate,toxChemicalName,toxRecognized,toxSuspected";
-					String taxonomyPath = "lucene/taxonomies";
+					// index and obtain toxicities
+					// for later use indexing reports
+		    		Toxicities toxicities = new Toxicities();
+		    		toxicities.setIndexFolderPath("indexes/toxicities");
+		    		toxicities.setIndexFields("toxCasEdfId,toxChemicalName,toxRecognized,toxSuspected");
+		    		toxicities.setTaxonomyFolderPath("taxonomies/toxicities");
+		    		toxicities.setProgressInterval(100);
+		    		toxicities.setOutputDebugInfo(false);
+		    		toxicities.setOutputToSystemErr(true);
+		    		toxicities.setOutputToSystemOut(true);
+		    		toxicities.setProgressMessageQueue(progressMessageQueue);
+		    		toxicities.setOutputToMsgQueue(true);
+		    		String textFilePath = "data/scorecard-goodguide-toxicities-grouped.txt";
+		    		String textColSeparator = "\t";
+					toxicities.indexViaLucene(textFilePath, textColSeparator);
+					toxicities.queryViaLucene("toxCasEdfId", "*", maxToxicities, "toxCasEdfId", Boolean.TRUE);
+					// index blendeds
 					String casEdfIdFieldName =  "chmCasEdfId";
-					progressInterval = 10000;
-					List<org.apache.lucene.document.Document> documents = luceneIndex.query("lucene/toxicities", "text", "*", maxDocs, Boolean.TRUE, "");
-					Map<String,Toxicity> toxicities = new Toxicities(documents).getToxicitiesMap();
-					luceneIndex.load(txtPath, colSeparator, indexPath, indexFields, progressInterval, txtAreaMessages, toxicities);
-					message = "Ended Indexing Blendeds via Lucene!";
-//					System.out.println(message);
-					progressMessageQueue.send(new MessageInput(message));
+					Blendeds blendeds = new Blendeds();
+					blendeds.setIndexFolderPath("indexes/blendeds");
+					blendeds.setIndexFields("rptPdfSeqId,rptAPI,rptState,rptCounty,rptOperator,rptWellName,chmCasEdfId,chmTradeName,chmSupplier,chmPurpose,chmIngredients,chmComments,rptFractureDate,toxChemicalName,toxRecognized,toxSuspected");
+					blendeds.setTaxonomyFolderPath("taxonomies/blendeds");
+					blendeds.setProgressInterval(10000);
+					blendeds.setOutputDebugInfo(false);
+					blendeds.setOutputToSystemErr(true);
+					blendeds.setOutputToSystemOut(true);
+		    		blendeds.setProgressMessageQueue(progressMessageQueue);
+		    		blendeds.setOutputToMsgQueue(true);
+					textFilePath = "data/2013_FracKhem_Blendeds.txt";
+					textColSeparator = "\t";
+					blendeds.indexViaLucene(textFilePath, textColSeparator, casEdfIdFieldName, toxicities.getToxicitiesMap());
 				} catch (IOException e) {
 					e.printStackTrace(System.err);
 				} catch (ParseException e) {
@@ -553,38 +556,37 @@ public class FracKhemGUIController {
 			public void run() {
 	            stage.getScene().setCursor(Cursor.WAIT);
 				try {
-			    	String message;
-			    	// index toxicities
-			    	message = "Start Indexing Toxicities via Lucene...";
-//			    	System.out.println(message);
-					progressMessageQueue.send(new MessageInput(message));
-					String txtPath = "data/scorecard-goodguide-toxicities-grouped.txt";
-					String colSeparator = "\t";
-					String indexPath = "lucene/toxicities";
-					String indexFields = "toxCasEdfId,toxChemicalName,toxRecognized,toxSuspected";
-					Integer progressInterval = 100;
-					LuceneIndex luceneIndex = new LuceneIndex(progressMessageQueue);
-					luceneIndex.load(txtPath, colSeparator, indexPath, indexFields, progressInterval, txtAreaMessages);
-					message = "Ended Indexing Toxicities via Lucene!";
-					System.out.println(message);
-					txtAreaMessages.appendText(System.lineSeparator() + message);
+					// index and obtain toxicities
+					// for later use indexing reports
+		    		Toxicities toxicities = new Toxicities();
+		    		toxicities.setIndexFolderPath("indexes/toxicities");
+		    		toxicities.setIndexFields("toxCasEdfId,toxChemicalName,toxRecognized,toxSuspected");
+		    		toxicities.setTaxonomyFolderPath("taxonomies/toxicities");
+		    		toxicities.setProgressInterval(100);
+		    		toxicities.setOutputDebugInfo(false);
+		    		toxicities.setOutputToSystemErr(true);
+		    		toxicities.setOutputToSystemOut(true);
+		    		toxicities.setProgressMessageQueue(progressMessageQueue);
+		    		toxicities.setOutputToMsgQueue(true);
+		    		String textFilePath = "data/scorecard-goodguide-toxicities-grouped.txt";
+		    		String textColSeparator = "\t";
+					toxicities.indexViaLucene(textFilePath, textColSeparator);
+					toxicities.queryViaLucene("toxCasEdfId", "*", maxToxicities, "toxCasEdfId", Boolean.TRUE);
 					// index chemicals
-					message = "Start Indexing Chemicals via Lucene...";
-			    	System.out.println(message);
-					txtAreaMessages.setText(message);
-					txtPath = "data/2013_FracKhem_Blendeds.txt";
-					colSeparator = "\t";
-					indexPath = "lucene/chemicals";
-					indexFields = "rptPdfSeqId,rptAPI,chmCasEdfId,chmTradeName,chmSupplier,chmPurpose,chmIngredients,chmComments,rptFractureDate,toxChemicalName,toxRecognized,toxSuspected";
-					String taxonomyPath = "lucene/taxonomies";
 					String casEdfIdFieldName =  "chmCasEdfId";
-					progressInterval = 10000;
-					List<org.apache.lucene.document.Document> documents = luceneIndex.query("lucene/toxicities", "text", "*", maxDocs, Boolean.TRUE, "");
-					Map<String,Toxicity> toxicities = new Toxicities(documents).getToxicitiesMap();
-					luceneIndex.load(txtPath, colSeparator, indexPath, indexFields, progressInterval, txtAreaMessages, toxicities);
-					message = "Ended Indexing Chemicals via Lucene!";
-//					System.out.println(message);
-					progressMessageQueue.send(new MessageInput(message));
+					Chemicals chemicals = new Chemicals();
+					chemicals.setIndexFolderPath("indexes/chemicals");
+					chemicals.setIndexFields("rptPdfSeqId,rptAPI,chmCasEdfId,chmTradeName,chmSupplier,chmPurpose,chmIngredients,chmComments,rptFractureDate,toxChemicalName,toxRecognized,toxSuspected");
+					chemicals.setTaxonomyFolderPath("taxonomies/chemicals");
+					chemicals.setProgressInterval(10000);
+					chemicals.setOutputDebugInfo(false);
+					chemicals.setOutputToSystemErr(true);
+					chemicals.setOutputToSystemOut(true);
+					chemicals.setProgressMessageQueue(progressMessageQueue);
+					chemicals.setOutputToMsgQueue(true);
+					textFilePath = "data/2013_FracKhem_Blendeds.txt";
+					textColSeparator = "\t";
+					chemicals.indexViaLucene(textFilePath, textColSeparator, casEdfIdFieldName, toxicities.getToxicitiesMap());
 				} catch (IOException e) {
 					e.printStackTrace(System.err);
 				} catch (ParseException e) {
@@ -605,39 +607,39 @@ public class FracKhemGUIController {
 			public void run() {
 	            stage.getScene().setCursor(Cursor.WAIT);
 				try {
-			    	String message;
-			    	// index toxicities
-			    	message = "Start Indexing Toxicities via Lucene...";
-//			    	System.out.println(message);
-					progressMessageQueue.send(new MessageInput(message));
-					String txtPath = "data/scorecard-goodguide-toxicities-grouped.txt";
-					String colSeparator = "\t";
-					String indexPath = "lucene/toxicities";
-					String indexFields = "toxCasEdfId,toxChemicalName,toxRecognized,toxSuspected";
-					Integer progressInterval = 100;
-					LuceneIndex luceneIndex = new LuceneIndex(progressMessageQueue);
-					luceneIndex.load(txtPath, colSeparator, indexPath, indexFields, progressInterval, txtAreaMessages);
-					message = "Ended Indexing Toxicities via Lucene!";
-					System.out.println(message);
-					txtAreaMessages.appendText(System.lineSeparator() + message);
+					// index and obtain toxicities
+					// for later use indexing reports
+		    		Toxicities toxicities = new Toxicities();
+		    		toxicities.setIndexFolderPath("indexes/toxicities");
+		    		toxicities.setIndexFields("toxCasEdfId,toxChemicalName,toxRecognized,toxSuspected");
+		    		toxicities.setTaxonomyFolderPath("taxonomies/toxicities");
+		    		toxicities.setProgressInterval(100);
+		    		toxicities.setOutputDebugInfo(false);
+		    		toxicities.setOutputToSystemErr(true);
+		    		toxicities.setOutputToSystemOut(true);
+		    		toxicities.setProgressMessageQueue(progressMessageQueue);
+		    		toxicities.setOutputToMsgQueue(true);
+		    		String textFilePath = "data/scorecard-goodguide-toxicities-grouped.txt";
+		    		String textColSeparator = "\t";
+					toxicities.indexViaLucene(textFilePath, textColSeparator);
+					toxicities.queryViaLucene("toxCasEdfId", "*", maxToxicities, "toxCasEdfId", Boolean.TRUE);
 					// index reports
-			    	message = "Start Indexing Reports via Lucene...";
-			    	System.out.println(message);
-					txtAreaMessages.setText(message);
-					txtPath = "data/2013_FracKhem_Blendeds.txt";
-					colSeparator = "\t";
-					indexPath = "lucene/reports";
-					indexFields = "rptPdfSeqId,rptAPI,rptState,rptCounty,rptOperator,rptWellName,rptFractureDate,toxRecognized,toxSuspected";
-					String levelFields = "rptAPI,rptCounty,rptDatum,rptFractureDate,rptLatLng,rptLatitude,rptLongitude,rptOperator,rptProdType,rptPdfSeqId,rptPublishedDate,rptSeqId,rptState,rptTWV,rptTVD,rptWellName";
-					String taxonomyPath = "lucene/taxonomies";
 					String casEdfIdFieldName =  "chmCasEdfId";
-					progressInterval = 10000;
-					List<org.apache.lucene.document.Document> documents = luceneIndex.query("lucene/toxicities", "text", "*", maxDocs, Boolean.TRUE, "");
-					Map<String,Toxicity> toxicities = new Toxicities(documents).getToxicitiesMap();
-					luceneIndex.load(txtPath, colSeparator, indexPath, indexFields, casEdfIdFieldName, taxonomyPath, progressInterval, txtAreaMessages, toxicities, levelFields, "toxRecognized", "toxSuspected");
-					message = "Ended Indexing Reports via Lucene!";
-//					System.out.println(message);
-					progressMessageQueue.send(new MessageInput(message));
+					Reports reports = new Reports();
+					reports.setIndexFolderPath("indexes/reports");
+					reports.setIndexFields("rptPdfSeqId,rptAPI,rptState,rptCounty,rptOperator,rptWellName,rptFractureDate,toxRecognized,toxSuspected");
+					reports.setLevelFields("rptAPI,rptCounty,rptDatum,rptFractureDate,rptLatLng,rptLatitude,rptLongitude,rptOperator,rptProdType,rptPdfSeqId,rptPublishedDate,rptSeqId,rptState,rptTWV,rptTVD,rptWellName");
+					reports.setCasEdfIdFieldName(casEdfIdFieldName);
+					reports.setTaxonomyFolderPath("taxonomies/reports");
+					reports.setProgressInterval(10000);
+					reports.setOutputDebugInfo(false);
+					reports.setOutputToSystemErr(true);
+					reports.setOutputToSystemOut(true);
+					reports.setProgressMessageQueue(progressMessageQueue);
+					reports.setOutputToMsgQueue(true);
+					textFilePath = "data/2013_FracKhem_Blendeds.txt";
+					textColSeparator = "\t";
+					reports.indexViaLucene(textFilePath, textColSeparator, toxicities.getToxicitiesMap(), "toxRecognized", "toxSuspected");
 				} catch (IOException e) {
 					e.printStackTrace(System.err);
 				} catch (ParseException e) {
@@ -657,21 +659,20 @@ public class FracKhemGUIController {
 			@Override
 			public void run() {
 	            stage.getScene().setCursor(Cursor.WAIT);
-				try {
-			    	String message;
-			    	message = "Start Indexing Toxicities via Lucene...";
-//			    	System.out.println(message);
-					progressMessageQueue.send(new MessageInput(message));
-					String txtPath = "data/scorecard-goodguide-toxicities-grouped.txt";
-					String colSeparator = "\t";
-					String indexPath = "lucene/toxicities";
-					String indexFields = "toxCasEdfId,toxChemicalName,toxRecognized,toxSuspected";
-					Integer progressInterval = 100;
-					LuceneIndex luceneIndex = new LuceneIndex(progressMessageQueue);
-					luceneIndex.load(txtPath, colSeparator, indexPath, indexFields, progressInterval, txtAreaMessages);
-					message = "Ended Indexing Toxicities via Lucene!";
-//					System.out.println(message);
-					progressMessageQueue.send(new MessageInput(message));
+	            try {
+		    		Toxicities toxicities = new Toxicities();
+		    		toxicities.setIndexFolderPath("indexes/toxicities");
+		    		toxicities.setIndexFields("toxCasEdfId,toxChemicalName,toxRecognized,toxSuspected");
+		    		toxicities.setTaxonomyFolderPath("taxonomies/toxicities");
+		    		toxicities.setProgressInterval(100);
+		    		toxicities.setOutputDebugInfo(false);
+		    		toxicities.setOutputToSystemErr(true);
+		    		toxicities.setOutputToSystemOut(true);
+		    		toxicities.setProgressMessageQueue(progressMessageQueue);
+		    		toxicities.setOutputToMsgQueue(true);
+		    		String textFilePath = "data/scorecard-goodguide-toxicities-grouped.txt";
+		    		String textColSeparator = "\t";
+					toxicities.indexViaLucene(textFilePath, textColSeparator);
 				} catch (IOException e) {
 					e.printStackTrace(System.err);
 				}
@@ -727,26 +728,23 @@ public class FracKhemGUIController {
     
     @FXML
     private void txtFieldQueryText0_onAction(ActionEvent event) {
-		String indexPath = "lucene/blendeds";
+		String indexFolderPath = "indexes/blendeds";
+		String taxonomyFolderPath = "taxonomies/blendeds";
 		String queryField = "text";
-		String queryText = txtFieldQueryText0.getText().trim();
-		String taxonomyPath = "lucene/taxonomies";
+		String queryValue = txtFieldQueryText0.getText().trim();
 		stage.getScene().setCursor(Cursor.WAIT);
 		try {
-		    LuceneIndex luceneIndex = new LuceneIndex();
-			List<org.apache.lucene.document.Document> documents;
-			Long bgnMillis = System.currentTimeMillis();
-			documents = luceneIndex.query(indexPath, queryField, queryText, maxDocs, Boolean.FALSE, taxonomyPath, "rptPdfSeqId", "chmRow:Integer");
-			Long endMillis = System.currentTimeMillis();
-			Long elapsedMillis = endMillis - bgnMillis;
-			String statText = documents.size() + " disclosed reports+chemicals retrieved in " + (elapsedMillis * 1.0 / 1000) + " seconds (" + df.format((documents.size() * 1000.0) / elapsedMillis) + " records/second).";
-			txtFieldQueryStat0.setText(statText);
-			// populate the ObservableList for
-			// later usage in the TableView control
-			Blendeds<Blended> blendeds = new Blendeds<>(documents);
+			Boolean allowLeadingWildcard = Boolean.FALSE;
+			String sortOrder = "rptPdfSeqId,chmRow:Integer";
+			Integer maxDocs = 50000;
+			Blendeds<Blended> blendeds = new Blendeds<>();
+			blendeds.setIndexFolderPath(indexFolderPath);
+			blendeds.setTaxonomyFolderPath(taxonomyFolderPath);
+			QueryResult queryResult = blendeds.queryViaLucene(queryField, queryValue, maxDocs, sortOrder, allowLeadingWildcard);
+			txtFieldQueryStat0.setText(queryResult.getCommentary());
 			// build the table column headers
 			List<TableColumn<Map,String>> dataColumns = new ArrayList<>();
-			for (org.apache.lucene.document.Document document : documents) {
+			for (org.apache.lucene.document.Document document : queryResult.getDocuments()) {
 				for (IndexableField field : document.getFields()) {
 					TableColumn<Map,String> dataColumn = new TableColumn<>(field.name());
 					dataColumn.setCellValueFactory(new MapValueFactory(field.name()));
@@ -769,26 +767,23 @@ public class FracKhemGUIController {
     
     @FXML
     private void txtFieldQueryText1_onAction(ActionEvent event) {
-		String indexPath = "lucene/chemicals";
+		String indexFolderPath = "indexes/chemicals";
+		String taxonomyFolderPath = "taxonomies/chemicals";
 		String queryField = "text";
-		String queryText = txtFieldQueryText1.getText().trim();
-		String taxonomyPath = "lucene/taxonomies";
+		String queryValue = txtFieldQueryText1.getText().trim();
 		stage.getScene().setCursor(Cursor.WAIT);
 		try {
-		    LuceneIndex luceneIndex = new LuceneIndex();
-			List<org.apache.lucene.document.Document> documents;
-			Long bgnMillis = System.currentTimeMillis();
-			documents = luceneIndex.query(indexPath, queryField, queryText, maxDocs, Boolean.FALSE, taxonomyPath, "rptPdfSeqId", "chmRow:Integer");
-			Long endMillis = System.currentTimeMillis();
-			Long elapsedMillis = endMillis - bgnMillis;
-			String statText = documents.size() + " disclosed chemicals retrieved in " + (elapsedMillis * 1.0 / 1000) + " seconds (" + df.format((documents.size() * 1000.0) / elapsedMillis) + " records/second).";
-			txtFieldQueryStat1.setText(statText);
-			// populate the ObservableList for
-			// later usage in the TableView control
-			Chemicals<Chemical> chemicals = new Chemicals<>(documents);
+			Boolean allowLeadingWildcard = Boolean.FALSE;
+			String sortOrder = "rptPdfSeqId,chmRow:Integer";
+			Integer maxDocs = 50000;
+			Chemicals<Chemical> chemicals = new Chemicals<>();
+			chemicals.setIndexFolderPath(indexFolderPath);
+			chemicals.setTaxonomyFolderPath(taxonomyFolderPath);
+			QueryResult queryResult = chemicals.queryViaLucene(queryField, queryValue, maxDocs, sortOrder, allowLeadingWildcard);
+			txtFieldQueryStat1.setText(queryResult.getCommentary());
 			// build the table column headers
 			List<TableColumn<Map,String>> dataColumns = new ArrayList<>();
-			for (org.apache.lucene.document.Document document : documents) {
+			for (org.apache.lucene.document.Document document : queryResult.getDocuments()) {
 				for (IndexableField field : document.getFields()) {
 					TableColumn<Map,String> dataColumn = new TableColumn<>(field.name());
 					dataColumn.setCellValueFactory(new MapValueFactory(field.name()));
@@ -811,26 +806,23 @@ public class FracKhemGUIController {
     
     @FXML
     private void txtFieldQueryText2_onAction(ActionEvent event) {
-		String indexPath = "lucene/reports";
+		String indexFolderPath = "indexes/reports";
+		String taxonomyFolderPath = "taxonomies/reports";
 		String queryField = "text";
-		String queryText = txtFieldQueryText2.getText().trim();
-		String taxonomyPath = "lucene/taxonomies";
+		String queryValue = txtFieldQueryText2.getText().trim();
 		stage.getScene().setCursor(Cursor.WAIT);
 		try {
-		    LuceneIndex luceneIndex = new LuceneIndex();
-			List<org.apache.lucene.document.Document> documents;
-			Long bgnMillis = System.currentTimeMillis();
-			documents = luceneIndex.query(indexPath, queryField, queryText, maxDocs, Boolean.FALSE, taxonomyPath, "rptPdfSeqId");
-			Long endMillis = System.currentTimeMillis();
-			Long elapsedMillis = endMillis - bgnMillis;
-			String statText = documents.size() + " disclosed reports retrieved in " + (elapsedMillis * 1.0 / 1000) + " seconds (" + df.format((documents.size() * 1000.0) / elapsedMillis) + " records/second).";
-			txtFieldQueryStat2.setText(statText);
-			// populate the ObservableList for
-			// later usage in the TableView control
-			Reports<Report> reports = new Reports<>(documents);
+			Boolean allowLeadingWildcard = Boolean.FALSE;
+			String sortOrder = "rptPdfSeqId";
+			Integer maxDocs = 50000;
+			Reports<Report> reports = new Reports<>();
+			reports.setIndexFolderPath(indexFolderPath);
+			reports.setTaxonomyFolderPath(taxonomyFolderPath);
+			QueryResult queryResult = reports.queryViaLucene(queryField, queryValue, maxDocs, sortOrder, allowLeadingWildcard);
+			txtFieldQueryStat2.setText(queryResult.getCommentary());
 			// build the table column headers
 			List<TableColumn<Map,String>> dataColumns = new ArrayList<>();
-			for (org.apache.lucene.document.Document document : documents) {
+			for (org.apache.lucene.document.Document document : queryResult.getDocuments()) {
 				for (IndexableField field : document.getFields()) {
 					TableColumn<Map,String> dataColumn = new TableColumn<>(field.name());
 					dataColumn.setCellValueFactory(new MapValueFactory(field.name()));
@@ -853,25 +845,24 @@ public class FracKhemGUIController {
     
     @FXML
     private void txtFieldQueryText3_onAction(ActionEvent event) {
-		String indexPath = "lucene/toxicities";
+		String indexFolderPath = "indexes/toxicities";
+		String taxonomyFolderPath = "taxonomies/toxicities";
 		String queryField = "text";
-		String queryText = txtFieldQueryText3.getText().trim();
+		String queryValue = txtFieldQueryText3.getText().trim();
 		stage.getScene().setCursor(Cursor.WAIT);
 		try {
-		    LuceneIndex luceneIndex = new LuceneIndex();
-			List<org.apache.lucene.document.Document> documents;
-			Long bgnMillis = System.currentTimeMillis();
-			documents = luceneIndex.query(indexPath, queryField, queryText, maxDocs, Boolean.FALSE, "toxCasEdfId");
-			Long endMillis = System.currentTimeMillis();
-			Long elapsedMillis = endMillis - bgnMillis;
-			String statText = documents.size() + " toxic chemicals retrieved in " + (elapsedMillis * 1.0 / 1000) + " seconds (" + df.format((documents.size() * 1000.0) / elapsedMillis) + " records/second).";
-			txtFieldQueryStat3.setText(statText);
-			// populate the ObservableList for
-			// later usage in the TableView control
-			Toxicities<Toxicity> toxicities = new Toxicities<>(documents);
+
+			Boolean allowLeadingWildcard = Boolean.FALSE;
+			String sortOrder = "toxCasEdfId";
+			Integer maxDocs = 10000;
+			Toxicities<Toxicity> toxicities = new Toxicities<>();
+			toxicities.setIndexFolderPath(indexFolderPath);
+			toxicities.setTaxonomyFolderPath(taxonomyFolderPath);
+			QueryResult queryResult = toxicities.queryViaLucene(queryField, queryValue, maxDocs, sortOrder, allowLeadingWildcard);
+			txtFieldQueryStat3.setText(queryResult.getCommentary());
 			// build the table column headers
 			List<TableColumn<Map,String>> dataColumns = new ArrayList<>();
-			for (org.apache.lucene.document.Document document : documents) {
+			for (org.apache.lucene.document.Document document : queryResult.getDocuments()) {
 				for (IndexableField field : document.getFields()) {
 					TableColumn<Map,String> dataColumn = new TableColumn<>(field.name());
 					dataColumn.setCellValueFactory(new MapValueFactory(field.name()));
@@ -1051,6 +1042,15 @@ public class FracKhemGUIController {
 
 	public void setPropFileCurrFileVal(String propFileCurrFileVal) {
 		this.propFileCurrFileVal = propFileCurrFileVal;
+	}
+	
+	public Integer getMaxToxicities() {
+		return maxToxicities;
+	}
+
+
+	public void setMaxToxicities(Integer maxToxicities) {
+		this.maxToxicities = maxToxicities;
 	}
 	
 }

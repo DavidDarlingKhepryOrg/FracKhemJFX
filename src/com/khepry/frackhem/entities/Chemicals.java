@@ -90,6 +90,8 @@ public class Chemicals<E> implements ObservableList<E> {
 	private Boolean outputToMsgQueue = Boolean.FALSE;
 	
 	private MessageQueue progressMessageQueue;
+
+	List<Document> documents = new ArrayList<>();
 	
 	public Chemicals() {
 		
@@ -333,6 +335,7 @@ public class Chemicals<E> implements ObservableList<E> {
 		QueryResult queryResult = new QueryResult();
 		
 		list.clear();
+		documents.clear();
 		
 		String message;
 		
@@ -400,17 +403,21 @@ public class Chemicals<E> implements ObservableList<E> {
 			
 			indexSearcher.search(query, MultiCollector.wrap(queryResult.getTopFieldCollector(), queryResult.getFacetsCollector()));
 
+			List<Document> documents = new ArrayList<>();
 			for (ScoreDoc scoreDoc : queryResult.getTopFieldCollector().topDocs().scoreDocs) {
-				Chemical chemical = new Chemical(indexSearcher.doc(scoreDoc.doc));
+				Document document = indexSearcher.doc(scoreDoc.doc);
+				documents.add(document);
+				Chemical chemical = new Chemical(document);
 				list.add((E)chemical);
 				if (outputDebugInfo) {
-					for (IndexableField field : indexSearcher.doc(scoreDoc.doc).getFields()) {
+					for (IndexableField field : document.getFields()) {
 						System.out.print(field.stringValue());
 						System.out.print("\t");
 					}
 					System.out.println();
 				}
 			}
+			queryResult.setDocuments(documents);
 			
 			for (FacetResult facetResult : queryResult.getFacetsCollector().getFacetResults()) {
 				if (outputDebugInfo) {
@@ -513,6 +520,14 @@ public class Chemicals<E> implements ObservableList<E> {
 	public void setOutputToMsgQueue(Boolean outputToMsgQueue) {
 		this.outputToMsgQueue = outputToMsgQueue;
 	}
+	
+	public List<Document> getDocuments() {
+		return documents;
+	}
+
+	public void setDocuments(List<Document> documents) {
+		this.documents = documents;
+	}
 
 	
 	@Override
@@ -538,6 +553,7 @@ public class Chemicals<E> implements ObservableList<E> {
 	@Override
 	public void clear() {
 		list.clear();
+		documents.clear();
 	}
 
 	@Override
