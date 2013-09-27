@@ -3,3 +3,7 @@ syntax: regexp
 ^data$
 syntax: regexp
 ^lucene$
+syntax: regexp
+^indexes$
+syntax: regexp
+^taxonomies$
