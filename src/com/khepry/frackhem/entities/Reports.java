@@ -101,6 +101,8 @@ public class Reports<E> implements ObservableList<E> {
 	
 	private MessageQueue progressMessageQueue;
 
+	List<Document> documents = new ArrayList<>();
+
 	public Reports() {
 		
 	}
@@ -415,6 +417,7 @@ public class Reports<E> implements ObservableList<E> {
 		QueryResult queryResult = new QueryResult();
 		
 		list.clear();
+		documents.clear();
 
 		String message;
 		
@@ -479,18 +482,22 @@ public class Reports<E> implements ObservableList<E> {
 			queryResult.setFacetsCollector(FacetsCollector.create(facetSearchParams, indexReader, taxonomyReader));
 			
 			indexSearcher.search(query, MultiCollector.wrap(queryResult.getTopFieldCollector(), queryResult.getFacetsCollector()));
-
+			
+			List<Document> documents = new ArrayList<>();
 			for (ScoreDoc scoreDoc : queryResult.getTopFieldCollector().topDocs().scoreDocs) {
-				Report report = new Report(indexSearcher.doc(scoreDoc.doc));
+				Document document = indexSearcher.doc(scoreDoc.doc);
+				documents.add(document);
+				Report report = new Report(document);
 				list.add((E)report);
 				if (outputDebugInfo) {
-					for (IndexableField field : indexSearcher.doc(scoreDoc.doc).getFields()) {
+					for (IndexableField field : document.getFields()) {
 						System.out.print(field.stringValue());
 						System.out.print("\t");
 					}
 					System.out.println();
 				}
 			}
+			queryResult.setDocuments(documents);
 			
 			for (FacetResult facetResult : queryResult.getFacetsCollector().getFacetResults()) {
 				if (outputDebugInfo) {
@@ -604,6 +611,14 @@ public class Reports<E> implements ObservableList<E> {
 	public void setOutputToMsgQueue(Boolean outputToMsgQueue) {
 		this.outputToMsgQueue = outputToMsgQueue;
 	}
+	
+	public List<Document> getDocuments() {
+		return documents;
+	}
+
+	public void setDocuments(List<Document> documents) {
+		this.documents = documents;
+	}
 
 
 	@Override
@@ -629,6 +644,7 @@ public class Reports<E> implements ObservableList<E> {
 	@Override
 	public void clear() {
 		list.clear();
+		documents.clear();
 	}
 
 	@Override

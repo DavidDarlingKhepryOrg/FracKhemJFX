@@ -92,6 +92,8 @@ public class Toxicities<E> implements ObservableList<E> {
 	
 	private MessageQueue progressMessageQueue;
 
+	List<Document> documents = new ArrayList<>();
+
 	public Toxicities() {
 
 	}
@@ -326,6 +328,7 @@ public class Toxicities<E> implements ObservableList<E> {
 		QueryResult queryResult = new QueryResult();
 		
 		list.clear();
+		documents.clear();
 
 		String message;
 		
@@ -393,17 +396,21 @@ public class Toxicities<E> implements ObservableList<E> {
 			
 			indexSearcher.search(query, MultiCollector.wrap(queryResult.getTopFieldCollector(), queryResult.getFacetsCollector()));
 
+			List<Document> documents = new ArrayList<>();
 			for (ScoreDoc scoreDoc : queryResult.getTopFieldCollector().topDocs().scoreDocs) {
-				Toxicity toxicity = new Toxicity(indexSearcher.doc(scoreDoc.doc));
+				Document document = indexSearcher.doc(scoreDoc.doc);
+				documents.add(document);
+				Toxicity toxicity = new Toxicity(document);
 				list.add((E)toxicity);
 				if (outputDebugInfo) {
-					for (IndexableField field : indexSearcher.doc(scoreDoc.doc).getFields()) {
+					for (IndexableField field : document.getFields()) {
 						System.out.print(field.stringValue());
 						System.out.print("\t");
 					}
 					System.out.println();
 				}
 			}
+			queryResult.setDocuments(documents);
 			
 			for (FacetResult facetResult : queryResult.getFacetsCollector().getFacetResults()) {
 				if (outputDebugInfo) {
@@ -507,6 +514,14 @@ public class Toxicities<E> implements ObservableList<E> {
 		this.outputToMsgQueue = outputToMsgQueue;
 	}
 	
+	public List<Document> getDocuments() {
+		return documents;
+	}
+
+	public void setDocuments(List<Document> documents) {
+		this.documents = documents;
+	}
+	
 
 	@Override
 	public boolean add(E e) {
@@ -531,6 +546,7 @@ public class Toxicities<E> implements ObservableList<E> {
 	@Override
 	public void clear() {
 		list.clear();
+		documents.clear();
 	}
 
 	@Override
