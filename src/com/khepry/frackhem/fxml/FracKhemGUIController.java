@@ -684,44 +684,60 @@ public class FracKhemGUIController {
     
     @FXML
     private void onMnuClearBlendedsLuceneIndex(ActionEvent event) {
-		String indexPath = "lucene/blendeds";
-		LuceneIndex luceneIndex = new LuceneIndex();
-		File indexFile = new File(indexPath);
+		String indexFolderPath = "indexes/blendeds";
+		File indexFile = new File(indexFolderPath);
 		if (indexFile.exists()) {
-			luceneIndex.deleteLuceneIndex(indexFile);
+			GenericUtilities.deleteLuceneIndex(indexFile);
+		}
+		String taxonomyFolderPath = "taxonomies/blendeds";
+		File taxonomyFile = new File(taxonomyFolderPath);
+		if (taxonomyFile.exists()) {
+			GenericUtilities.deleteLuceneIndex(taxonomyFile);
 		}
     }
 
     
     @FXML
     private void onMnuClearChemicalsLuceneIndex(ActionEvent event) {
-		String indexPath = "lucene/chemicals";
-		LuceneIndex luceneIndex = new LuceneIndex();
-		File indexFile = new File(indexPath);
+		String indexFolderPath = "indexes/chemicals";
+		File indexFile = new File(indexFolderPath);
 		if (indexFile.exists()) {
-			luceneIndex.deleteLuceneIndex(indexFile);
+			GenericUtilities.deleteLuceneIndex(indexFile);
+		}
+		String taxonomyFolderPath = "taxonomies/chemicals";
+		File taxonomyFile = new File(taxonomyFolderPath);
+		if (taxonomyFile.exists()) {
+			GenericUtilities.deleteLuceneIndex(taxonomyFile);
 		}
     }
 
     
     @FXML
     private void onMnuClearReportsLuceneIndex(ActionEvent event) {
-		String indexPath = "lucene/reports";
-		LuceneIndex luceneIndex = new LuceneIndex();
-		File indexFile = new File(indexPath);
+		String indexFolderPath = "indexes/reports";
+		File indexFile = new File(indexFolderPath);
 		if (indexFile.exists()) {
-			luceneIndex.deleteLuceneIndex(indexFile);
+			GenericUtilities.deleteLuceneIndex(indexFile);
+		}
+		String taxonomyFolderPath = "taxonomies/reports";
+		File taxonomyFile = new File(taxonomyFolderPath);
+		if (taxonomyFile.exists()) {
+			GenericUtilities.deleteLuceneIndex(taxonomyFile);
 		}
     }
 
     
     @FXML
     private void onMnuClearToxicitiesLuceneIndex(ActionEvent event) {
-		String indexPath = "lucene/toxicities";
-		LuceneIndex luceneIndex = new LuceneIndex();
-		File indexFile = new File(indexPath);
+		String indexFolderPath = "indexes/toxicities";
+		File indexFile = new File(indexFolderPath);
 		if (indexFile.exists()) {
-			luceneIndex.deleteLuceneIndex(indexFile);
+			GenericUtilities.deleteLuceneIndex(indexFile);
+		}
+		String taxonomyFolderPath = "taxonomies/toxicities";
+		File taxonomyFile = new File(taxonomyFolderPath);
+		if (taxonomyFile.exists()) {
+			GenericUtilities.deleteLuceneIndex(taxonomyFile);
 		}
     }
 

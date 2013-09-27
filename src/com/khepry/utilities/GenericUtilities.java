@@ -47,7 +47,19 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.io.FileUtils;
 
 public class GenericUtilities {
-	
+
+
+    public static void deleteLuceneIndex(File indexFolder) {
+        if (indexFolder.exists()) {
+            File[] files = indexFolder.listFiles();
+            for (File file : files) {
+                file.delete();
+            }
+            indexFolder.delete();
+        }
+    }
+
+    
     public static void displayLogFile(String logFilePath, long logSleepMillis, String xsltFilePath, String xsldFilePath) {
         Logger.getLogger("").getHandlers()[0].close();
         // only display the log file
