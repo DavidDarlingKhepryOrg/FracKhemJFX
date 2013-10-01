@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
   Copyright 2013 Khepry Software
   
@@ -26,46 +27,82 @@
       <tabs>
         <Tab fx:id="tabBlended" text="Blended">
           <content>
-            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-              <children>
-                <TextField fx:id="txtFieldQueryText0" onAction="#txtFieldQueryText0_onAction" prefHeight="35.0" prefWidth="900.0" promptText="Enter text for which to search in this text box..." AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                <TextField fx:id="txtFieldQueryStat0" disable="true" editable="false" prefHeight="35.0" prefWidth="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0" />
-                <TableView fx:id="tblViewQueryResults0" prefHeight="675.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="70.0" />
-              </children>
-            </AnchorPane>
+            <SplitPane dividerPositions="0.850" focusTraversable="true" orientation="VERTICAL" prefHeight="745.0" prefWidth="160.0">
+              <items>
+                <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <children>
+                    <TextField fx:id="txtFieldQueryText0" onAction="#txtFieldQueryText0_onAction" prefHeight="35.0" prefWidth="900.0" promptText="Enter text for which to search in this text box..." AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                    <TextField fx:id="txtFieldQueryStat0" disable="true" editable="false" prefHeight="35.0" prefWidth="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0" />
+                    <TableView fx:id="tblViewQueryResults0" prefHeight="555.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="70.0" />
+                  </children>
+                </AnchorPane>
+                <AnchorPane id="ToxicityFacets" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <children>
+                    <TableView fx:id="tblViewFacetsToxicities0" prefHeight="120.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  </children>
+                </AnchorPane>
+              </items>
+            </SplitPane>
           </content>
         </Tab>
         <Tab fx:id="tabChemicals" text="Chemicals">
           <content>
-            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-              <children>
-                <TextField fx:id="txtFieldQueryText1" onAction="#txtFieldQueryText1_onAction" prefHeight="35.0" prefWidth="900.0" promptText="Enter text for which to search in this text box..." AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                <TextField fx:id="txtFieldQueryStat1" disable="true" editable="false" prefHeight="35.0" prefWidth="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0" />
-                <TableView fx:id="tblViewQueryResults1" prefHeight="675.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="70.0" />
-              </children>
-            </AnchorPane>
+            <SplitPane dividerPositions="0.850" focusTraversable="true" orientation="VERTICAL" prefHeight="745.0" prefWidth="160.0">
+              <items>
+                <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <children>
+                    <TextField fx:id="txtFieldQueryText1" onAction="#txtFieldQueryText1_onAction" prefHeight="35.0" prefWidth="900.0" promptText="Enter text for which to search in this text box..." AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                    <TextField fx:id="txtFieldQueryStat1" disable="true" editable="false" prefHeight="35.0" prefWidth="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0" />
+                    <TableView fx:id="tblViewQueryResults1" prefHeight="555.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="70.0" />
+                  </children>
+                </AnchorPane>
+                <AnchorPane id="ToxicityFacets" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <children>
+                    <TableView fx:id="tblViewFacetsToxicities1" prefHeight="120.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  </children>
+                </AnchorPane>
+              </items>
+            </SplitPane>
           </content>
         </Tab>
         <Tab fx:id="tabReports" text="Reports">
           <content>
-            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-              <children>
-                <TextField fx:id="txtFieldQueryText2" onAction="#txtFieldQueryText2_onAction" prefHeight="35.0" prefWidth="900.0" promptText="Enter text for which to search in this text box..." AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                <TextField fx:id="txtFieldQueryStat2" disable="true" editable="false" prefHeight="35.0" prefWidth="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0" />
-                <TableView fx:id="tblViewQueryResults2" prefHeight="675.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="70.0" />
-              </children>
-            </AnchorPane>
+            <SplitPane dividerPositions="0.850" focusTraversable="true" orientation="VERTICAL" prefHeight="745.0" prefWidth="160.0">
+              <items>
+                <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <children>
+                    <TextField fx:id="txtFieldQueryText2" onAction="#txtFieldQueryText2_onAction" prefHeight="35.0" prefWidth="900.0" promptText="Enter text for which to search in this text box..." AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                    <TextField fx:id="txtFieldQueryStat2" disable="true" editable="false" prefHeight="35.0" prefWidth="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0" />
+                    <TableView fx:id="tblViewQueryResults2" prefHeight="555.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="70.0" />
+                  </children>
+                </AnchorPane>
+                <AnchorPane id="ToxicityFacets" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <children>
+                    <TableView fx:id="tblViewFacetsToxicities2" prefHeight="120.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  </children>
+                </AnchorPane>
+              </items>
+            </SplitPane>
           </content>
         </Tab>
         <Tab fx:id="tabToxicities" text="Toxicities">
           <content>
-            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-              <children>
-                <TextField fx:id="txtFieldQueryText3" onAction="#txtFieldQueryText3_onAction" prefHeight="35.0" prefWidth="900.0" promptText="Enter text for which to search in this text box..." AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                <TextField fx:id="txtFieldQueryStat3" disable="true" editable="false" prefHeight="35.0" prefWidth="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0" />
-                <TableView fx:id="tblViewQueryResults3" prefHeight="675.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="70.0" />
-              </children>
-            </AnchorPane>
+            <SplitPane dividerPositions="0.850" focusTraversable="true" orientation="VERTICAL" prefHeight="745.0" prefWidth="160.0">
+              <items>
+                <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <children>
+                    <TextField fx:id="txtFieldQueryText3" onAction="#txtFieldQueryText3_onAction" prefHeight="35.0" prefWidth="900.0" promptText="Enter text for which to search in this text box..." AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                    <TextField fx:id="txtFieldQueryStat3" disable="true" editable="false" prefHeight="35.0" prefWidth="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0" />
+                    <TableView fx:id="tblViewQueryResults3" prefHeight="555.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="70.0" />
+                  </children>
+                </AnchorPane>
+                <AnchorPane id="ToxicityFacets" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <children>
+                    <TableView fx:id="tblViewFacetsToxicities3" prefHeight="120.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  </children>
+                </AnchorPane>
+              </items>
+            </SplitPane>
           </content>
         </Tab>
         <Tab fx:id="tabMessages" text="Messages">

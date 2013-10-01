@@ -110,6 +110,7 @@ public class Chemicals<E> implements ObservableList<E> {
 			list.add((E)chemical);
 		}
 	}
+
 	
 	public List<TableColumn> getTableColumns() {
 		List<TableColumn> list = new ArrayList<TableColumn>();
@@ -124,6 +125,7 @@ public class Chemicals<E> implements ObservableList<E> {
 		return list;
 	}
 
+	
 	public void indexViaLucene(
 			String textFilePath,
 			String textColSeparator,

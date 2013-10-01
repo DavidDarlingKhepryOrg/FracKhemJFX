@@ -108,6 +108,7 @@ public class Blendeds<E> implements ObservableList<E> {
 			list.add((E)blended);
 		}
 	}
+
 	
 	public List<TableColumn> getTableColumns() {
 		List<TableColumn> list = new ArrayList<TableColumn>();
@@ -122,6 +123,7 @@ public class Blendeds<E> implements ObservableList<E> {
 		return list;
 	}
 
+	
 	public void indexViaLucene(
 			String textFilePath,
 			String textColSeparator,

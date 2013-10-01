@@ -118,6 +118,7 @@ public class Reports<E> implements ObservableList<E> {
 			list.add((E)report);
 		}
 	}
+
 	
 	public List<TableColumn> getTableColumns() {
 		List<TableColumn> list = new ArrayList<TableColumn>();
