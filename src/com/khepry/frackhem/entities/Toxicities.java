@@ -114,6 +114,7 @@ public class Toxicities<E> implements ObservableList<E> {
 		}
 	}
 
+	
 	public List<TableColumn> getTableColumns() {
 		List<TableColumn> list = new ArrayList<>();
 		String properties = "CAS\nEDF\nId,toxCasEdfId;Chemical\nName,toxChemicalName;Toxicity\nRecognized,toxRecognized;Toxicity\nSuspected,toxSuspected";
@@ -127,6 +128,7 @@ public class Toxicities<E> implements ObservableList<E> {
 		return list;
 	}
 
+	
 	public Map<String, Toxicity> getToxicitiesMap() {
 		Map<String, Toxicity> map = new HashMap<>();
 		if (list.size() > 0) {

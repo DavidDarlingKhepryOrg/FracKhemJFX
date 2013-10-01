@@ -34,6 +34,7 @@ import java.util.Scanner;
 import java.util.prefs.Preferences;
 
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -54,6 +55,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
+import org.apache.lucene.facet.search.FacetResult;
+import org.apache.lucene.facet.search.FacetResultNode;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.markdown4j.Markdown4jProcessor;
@@ -73,6 +76,8 @@ import com.khepry.frackhem.entities.Report;
 import com.khepry.frackhem.entities.Reports;
 import com.khepry.frackhem.entities.Toxicities;
 import com.khepry.frackhem.entities.Toxicity;
+import com.khepry.frackhem.entities.ToxicityFacetRow;
+import com.khepry.frackhem.entities.ToxicityFacetRows;
 import com.khepry.handlers.queue.MessageQueueMonitor;
 import com.khepry.utilities.GenericUtilities;
 import com.npstrandberg.simplemq.MessageQueue;
@@ -154,6 +159,15 @@ public class FracKhemGUIController {
 
 	@FXML
 	private TableView tblViewQueryResults3;
+	
+	@FXML
+	private TableView tblViewFacetsToxicities0;
+	@FXML
+	private TableView tblViewFacetsToxicities1;
+	@FXML
+	private TableView tblViewFacetsToxicities2;
+	@FXML
+	private TableView tblViewFacetsToxicities3;
 
 	@FXML
 	private TextArea txtAreaMessages;
@@ -764,10 +778,18 @@ public class FracKhemGUIController {
 				break;
 			}
 			tblViewQueryResults0.getItems().clear();
-			// populate the table with data
+			// populate the query table with data
 			tblViewQueryResults0.setItems(blendeds);
 			// add the table column headers
 			tblViewQueryResults0.getColumns().setAll(blendeds.getTableColumns());
+			// clear the toxicity facets table view
+			tblViewFacetsToxicities0.getItems().clear();
+			// populate the toxicity facet table with data
+			ToxicityFacetRows toxicityFacetRows = new ToxicityFacetRows<>();
+			toxicityFacetRows.loadViaFacetResults(queryResult.getFacetResults());
+			tblViewFacetsToxicities0.setItems(toxicityFacetRows);
+			// add the toxicity table column headers
+			tblViewFacetsToxicities0.getColumns().setAll(toxicityFacetRows.getTableColumns());
 		} catch (IOException | ParseException e) {
 			e.printStackTrace(System.err);
 		}
@@ -807,6 +829,30 @@ public class FracKhemGUIController {
 			tblViewQueryResults1.setItems(chemicals);
 			// add the table column headers
 			tblViewQueryResults1.getColumns().setAll(chemicals.getTableColumns());
+			// build the Toxicity table view column headers
+			List<TableColumn<Map,String>> facetColumns = new ArrayList<>();
+			for (FacetResult facetResult : queryResult.getFacetResults()) {
+				for (FacetResultNode node0 : facetResult.getFacetResultNode().subResults) {
+					if (node0.label.toString().indexOf("/Toxicity/") > -1) {
+						if (node0.label.toString().indexOf(",") == -1) {
+							System.out.println(node0.label + ": " + node0.value);
+							TableColumn<Map,String> dataColumn = new TableColumn<>(node0.label.toString());
+							dataColumn.setCellValueFactory(new MapValueFactory(node0.label.toString()));
+							dataColumn.setSortable(true);
+							dataColumns.add(dataColumn);
+						}
+					}
+					break;
+				}
+			}
+			// clear the toxicity facets table view
+			tblViewFacetsToxicities1.getItems().clear();
+			// populate the toxicity facet table with data
+			ToxicityFacetRows toxicityFacetRows = new ToxicityFacetRows<>();
+			toxicityFacetRows.loadViaFacetResults(queryResult.getFacetResults());
+			tblViewFacetsToxicities1.setItems(toxicityFacetRows);
+			// add the toxicity table column headers
+			tblViewFacetsToxicities1.getColumns().setAll(toxicityFacetRows.getTableColumns());
 		} catch (IOException | ParseException e) {
 			e.printStackTrace(System.err);
 		}
@@ -846,6 +892,14 @@ public class FracKhemGUIController {
 			tblViewQueryResults2.setItems(reports);
 			// add the table column headers
 			tblViewQueryResults2.getColumns().setAll(reports.getTableColumns());
+			// clear the toxicity facets table view
+			tblViewFacetsToxicities2.getItems().clear();
+			// populate the toxicity facet table with data
+			ToxicityFacetRows toxicityFacetRows = new ToxicityFacetRows<>();
+			toxicityFacetRows.loadViaFacetResults(queryResult.getFacetResults());
+			tblViewFacetsToxicities2.setItems(toxicityFacetRows);
+			// add the toxicity table column headers
+			tblViewFacetsToxicities2.getColumns().setAll(toxicityFacetRows.getTableColumns());
 		} catch (IOException | ParseException e) {
 			e.printStackTrace(System.err);
 		}
@@ -895,6 +949,14 @@ public class FracKhemGUIController {
 				}
 			}
 			tblViewQueryResults3.getColumns().setAll(tableColumns);
+			// clear the toxicity facets table view
+			tblViewFacetsToxicities3.getItems().clear();
+			// populate the toxicity facet table with data
+			ToxicityFacetRows toxicityFacetRows = new ToxicityFacetRows<>();
+			toxicityFacetRows.loadViaFacetResults(queryResult.getFacetResults());
+			tblViewFacetsToxicities3.setItems(toxicityFacetRows);
+			// add the toxicity table column headers
+			tblViewFacetsToxicities3.getColumns().setAll(toxicityFacetRows.getTableColumns());
 		} catch (IOException | ParseException e) {
 			e.printStackTrace(System.err);
 		}
