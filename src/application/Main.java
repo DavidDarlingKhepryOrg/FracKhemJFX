@@ -49,7 +49,7 @@ public class Main extends Application {
     private boolean firstTime;
     private TrayIcon trayIcon;
     private String applicationTitle = "FracKhemJFX";
-    private String iconLocation = "images/ScarabBeetle.jpg";
+    private String iconLocation = "/com/khepry/images/ScarabBeetle.jpg";
     private String minimizeMessageText = "Right-click on the icon below to show a menu, or click on this 'balloon' to restore the interface to full size.";
 	
 	private String fxmlPath = "/com/khepry/frackhem/fxml";
@@ -141,8 +141,10 @@ public class Main extends Application {
             try {
 //                URL url = new URL("http://www.digitalphotoartistry.com/rose1.jpg");
 //                image = ImageIO.read(url);
-                File file = new File(iconLocation);
-                image = ImageIO.read(file);
+//                File file = new File(iconLocation);
+//                image = ImageIO.read(file);
+                URL urlIcon = Main.class.getResource(iconLocation);
+                image = ImageIO.read(urlIcon);
             } catch (IOException ex) {
                 System.out.println(ex);
             }
@@ -205,7 +207,7 @@ public class Main extends Application {
             /// ... add other menu items
             
             // construct a TrayIcon, scaling the image to 16x16 (the default dimensions of a tray icon)
-            trayIcon = new TrayIcon(image.getScaledInstance(16, 16, Image.SCALE_DEFAULT), applicationTitle, popupMenu);
+            trayIcon = new TrayIcon(image.getScaledInstance(24, 24, Image.SCALE_DEFAULT), applicationTitle, popupMenu);
             // set the TrayIcon properties
             trayIcon.addActionListener(showListener);
 
