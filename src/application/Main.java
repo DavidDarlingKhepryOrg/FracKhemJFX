@@ -56,8 +56,8 @@ public class Main extends Application {
 	private String fxmlXmlFileName = "FracKhemGUI.fxml";
 	private String fxmlCssFileName = "application.css";
 	
-	private Boolean systemErrorsDesired = true;
-	private Boolean systemOutputDesired = true;
+	private Boolean systemErrorsDesired = Boolean.TRUE;
+	private Boolean systemOutputDesired = Boolean.TRUE;
 	
 	FracKhemGUIController controller;
 	
@@ -68,13 +68,13 @@ public class Main extends Application {
 
 		// define working variables
 		String text = "";
-		Boolean terminateExecution = false;
+		Boolean terminateExecution = Boolean.FALSE;
 		
 		// does the specified FXML XML file path exist?
 		String fxmlXmlFileFullPath = fxmlPath.equals("") ? fxmlXmlFileName : fxmlPath + "/" + fxmlXmlFileName;
 		URL urlXml = Main.class.getResource(fxmlXmlFileFullPath);
 		if (urlXml == null) {
-			terminateExecution = true;
+			terminateExecution = Boolean.TRUE;
 			text = Main.class.getName() + ": FXML XML File '" + fxmlXmlFileFullPath + "' not found in resource path!";
 			GenericUtilities.outputToSystemErr(text, systemErrorsDesired);
 		}
@@ -83,7 +83,7 @@ public class Main extends Application {
 		String fxmlCssFileFullPath = fxmlPath.equals("") ? fxmlCssFileName : fxmlPath + "/" + fxmlCssFileName;
 		URL urlCss = Main.class.getResource(fxmlCssFileFullPath);
 		if (urlCss == null) {
-			terminateExecution = true;
+			terminateExecution = Boolean.TRUE;
 			text = Main.class.getName() + ": FXML CSS File '" + fxmlCssFileFullPath + "' not found in resource path!";
 			GenericUtilities.outputToSystemErr(text, systemErrorsDesired);
 		}
@@ -107,8 +107,8 @@ public class Main extends Application {
 	        
 	    	// initialize and display the stage
 	    	createTrayIcon(primaryStage);
-	        firstTime = true;
-	        Platform.setImplicitExit(false);
+	        firstTime = Boolean.TRUE;
+	        Platform.setImplicitExit(Boolean.FALSE);
 	        
 	        Scene scene = new Scene(root);
 			scene.getStylesheets().add(urlCss.toExternalForm());
@@ -159,10 +159,17 @@ public class Main extends Application {
             final ActionListener closeListener = new ActionListener() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent e) {
-                	controller.terminate();
-                	// fileWatcher.setTerminateWatching(true);
-                	System.out.println(applicationTitle + " terminated!");
-                    System.exit(0);
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            stage.close();
+                            controller.terminate();
+//                        	// fileWatcher.setTerminateWatching(Boolean.TRUE);
+                        	System.out.println(applicationTitle + " terminated!");
+                            Platform.exit();
+                            System.exit(0);
+                        }
+                    });
                 }
             };
 
@@ -214,7 +221,7 @@ public class Main extends Application {
     public void showProgramIsMinimizedMsg() {
         if (firstTime) {
             trayIcon.displayMessage(applicationTitle, minimizeMessageText, TrayIcon.MessageType.INFO);
-            firstTime = false;
+            firstTime = Boolean.FALSE;
         }
     }
 

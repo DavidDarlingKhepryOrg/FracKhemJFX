@@ -110,8 +110,8 @@ public class Blendeds<E> implements ObservableList<E> {
 	}
 
 	
-	public List<TableColumn> getTableColumns() {
-		List<TableColumn> list = new ArrayList<TableColumn>();
+	public List<TableColumn<?,?>> getTableColumns() {
+		List<TableColumn<?,?>> list = new ArrayList<>();
 		String properties = "SeqId,chmSeqId;Pdf\nSeqId,rptPdfSeqId;API,rptAPI;Fracture\nDate,rptFractureDate;State,rptState;County,rptCounty;Operator,rptOperator;Well Name,rptWellName;Prod\nType,rptProdType;TVD,rptTVD;TWV,rptTWV;Published Date,rptPublishedDate;Geo Lat/Lng,rptLatLng;Datum,rptDatum;Row,chmRow;CAS\nNumber,chmCasEdfId;Trade\nName,chmTradeName;Supplier,chmSupplier;Purpose,chmPurpose;Ingredients,chmIngredients;Additive\nConcentration,chmAdditiveConcentration;HF Fluid\nConcentration,chmHfFluidConcentration;Comments,chmComments;CAS\nType,chmCasType;Chemical\nName,toxChemicalName;Toxicity\nRecognized,toxRecognized;Toxicity\nSuspected,toxSuspected";
 		String[] keyValuePairs = properties.split(";");
 		for (String keyValuePair : keyValuePairs) {

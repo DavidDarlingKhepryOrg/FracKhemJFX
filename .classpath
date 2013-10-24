@@ -3,77 +3,78 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="con" path="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER"/>
-	<classpathentry kind="lib" path="E:/home/libraries-all/lucene-4.4.0/core/lucene-core-4.4.0.jar">
+	<classpathentry kind="lib" path="/home/khepry/libraries/lucene-4.4.0/core/lucene-core-4.4.0.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="http://lucene.apache.org/core/4_4_0/core"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="E:/home/libraries-all/lucene-4.4.0/facet/lucene-facet-4.4.0.jar">
+	<classpathentry kind="lib" path="/home/khepry/libraries/lucene-4.4.0/facet/lucene-facet-4.4.0.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="http://lucene.apache.org/core/4_4_0/facet"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="E:/home/libraries-all/lucene-4.4.0/grouping/lucene-grouping-4.4.0.jar">
+	<classpathentry kind="lib" path="/home/khepry/libraries/lucene-4.4.0/grouping/lucene-grouping-4.4.0.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="http://lucene.apache.org/core/4_4_0/grouping"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="E:/home/libraries-all/lucene-4.4.0/join/lucene-join-4.4.0.jar">
+	<classpathentry kind="lib" path="/home/khepry/libraries/lucene-4.4.0/join/lucene-join-4.4.0.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="http://lucene.apache.org/core/4_4_0/join"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="E:/home/libraries-all/lucene-4.4.0/analysis/common/lucene-analyzers-common-4.4.0.jar">
+	<classpathentry kind="lib" path="/home/khepry/libraries/lucene-4.4.0/analysis/common/lucene-analyzers-common-4.4.0.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="http://lucene.apache.org/core/4_4_0/analyzers-common"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="E:/home/libraries-all/lucene-4.4.0/queryparser/lucene-queryparser-4.4.0.jar">
+	<classpathentry kind="lib" path="/home/khepry/libraries/lucene-4.4.0/queryparser/lucene-queryparser-4.4.0.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="http://lucene.apache.org/core/4_4_0/queryparser"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="E:/home/libraries-all/itext-5.4.2/itextpdf-5.4.2.jar" sourcepath="E:/home/libraries-all/itext-5.4.2/itextpdf-5.4.2-sources.jar">
+	<classpathentry kind="lib" path="/home/khepry/libraries/itext-5.4.2/itextpdf-5.4.2.jar" sourcepath="/home/khepry/libraries/itext-5.4.2/itextpdf-5.4.2-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/E:/home/libraries-all/itext-5.4.2/itextpdf-5.4.2-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:file:/home/khepry/libraries/itext-5.4.2/itextpdf-5.4.2-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="E:/home/libraries-all/itext-5.4.2/itext-pdfa-5.4.2.jar" sourcepath="E:/home/libraries-all/itext-5.4.2/itext-pdfa-5.4.2-sources.jar">
+	<classpathentry kind="lib" path="/home/khepry/libraries/itext-5.4.2/itext-pdfa-5.4.2.jar" sourcepath="/home/khepry/libraries/itext-5.4.2/itext-pdfa-5.4.2-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/E:/home/libraries-all/itext-5.4.2/itext-pdfa-5.4.2-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:file:/home/khepry/libraries/itext-5.4.2/itext-pdfa-5.4.2-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="E:/home/libraries-all/itext-5.4.2/itext-xtra-5.4.2.jar" sourcepath="E:/home/libraries-all/itext-5.4.2/itext-xtra-5.4.2-sources.jar">
+	<classpathentry kind="lib" path="/home/khepry/libraries/itext-5.4.2/itext-xtra-5.4.2.jar" sourcepath="/home/khepry/libraries/itext-5.4.2/itext-xtra-5.4.2-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/E:/home/libraries-all/itext-5.4.2/itext-xtra-5.4.2-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:file:/home/khepry/libraries/itext-5.4.2/itext-xtra-5.4.2-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="E:/home/libraries-all/xmlworker-5.4.2/xmlworker-5.4.2.jar" sourcepath="E:/home/libraries-all/xmlworker-5.4.2/xmlworker-5.4.2-sources.jar">
+	<classpathentry kind="lib" path="/home/khepry/libraries/xmlworker-5.4.2/xmlworker-5.4.2.jar" sourcepath="/home/khepry/libraries/xmlworker-5.4.2/xmlworker-5.4.2-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/E:/home/libraries-all/xmlworker-5.4.2/xmlworker-5.4.2-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:file:/home/khepry/libraries/xmlworker-5.4.2/xmlworker-5.4.2-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="E:/home/libraries-all/markdown4j-2.2.jar"/>
-	<classpathentry kind="lib" path="E:/home/libraries-all/commons-io-2.4/commons-io-2.4.jar" sourcepath="E:/home/libraries-all/commons-io-2.4/commons-io-2.4-sources.jar">
+	<classpathentry kind="lib" path="/home/khepry/libraries/markdown4j-2.2.jar"/>
+	<classpathentry kind="lib" path="/home/khepry/libraries/commons-io-2.4/commons-io-2.4.jar" sourcepath="/home/khepry/libraries/commons-io-2.4/commons-io-2.4-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/E:/home/libraries-all/commons-io-2.4/commons-io-2.4-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:file:/home/khepry/libraries/commons-io-2.4/commons-io-2.4-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="E:/home/libraries-all/commons-lang3-3.1/commons-lang3-3.1.jar" sourcepath="E:/home/libraries-all/commons-lang3-3.1/commons-lang3-3.1-sources.jar">
+	<classpathentry kind="lib" path="/home/khepry/libraries/commons-lang3-3.1/commons-lang3-3.1.jar" sourcepath="/home/khepry/libraries/commons-lang3-3.1/commons-lang3-3.1-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/E:/home/libraries-all/commons-lang3-3.1/commons-lang3-3.1-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:file:/home/khepry/libraries/commons-lang3-3.1/commons-lang3-3.1-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="E:/home/libraries-all/hsqldb-1.8.1/lib/hsqldb.jar"/>
-	<classpathentry kind="lib" path="E:/home/libraries-all/simpleMQ/simplemq-1.2-SNAPSHOT.jar" sourcepath="E:/home/libraries-all/simpleMQ/simplemq-1.2-SNAPSHOT-sources.jar">
+	<classpathentry kind="lib" path="/home/khepry/libraries/hsqldb-1.8.1/lib/hsqldb.jar"/>
+	<classpathentry kind="lib" path="/home/khepry/libraries/simpleMQ/simplemq-1.2-SNAPSHOT.jar" sourcepath="/home/khepry/libraries/simpleMQ/simplemq-1.2-SNAPSHOT-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/E:/home/libraries-all/simpleMQ/simplemq-1.2-SNAPSHOT-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:file:/home/khepry/libraries/simpleMQ/simplemq-1.2-SNAPSHOT-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="E:/home/libraries-all/commons-logging-1.1.1/commons-logging-1.1.1.jar" sourcepath="E:/home/libraries-all/commons-logging-1.1.1/commons-logging-1.1.1-sources.jar">
+	<classpathentry kind="lib" path="/home/khepry/libraries/commons-logging-1.1.1/commons-logging-1.1.1.jar" sourcepath="/home/khepry/libraries/commons-logging-1.1.1/commons-logging-1.1.1-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/E:/home/libraries-all/commons-logging-1.1.1/commons-logging-1.1.1-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:file:/home/khepry/libraries/commons-logging-1.1.1/commons-logging-1.1.1-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/home/khepry/jdk1.7.0_40/jre/lib/jfxrt.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

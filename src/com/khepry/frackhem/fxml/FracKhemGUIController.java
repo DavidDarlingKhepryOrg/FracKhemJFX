@@ -514,7 +514,7 @@ public class FracKhemGUIController {
 				try {
 					// index and obtain toxicities
 					// for later use indexing reports
-		    		Toxicities toxicities = new Toxicities();
+		    		Toxicities<?> toxicities = new Toxicities<>();
 		    		toxicities.setIndexFolderPath("indexes/toxicities");
 		    		toxicities.setIndexFields("toxCasEdfId,toxChemicalName,toxRecognized,toxSuspected");
 		    		toxicities.setTaxonomyFolderPath("taxonomies/toxicities");
@@ -530,7 +530,7 @@ public class FracKhemGUIController {
 					toxicities.queryViaLucene("toxCasEdfId", "*", maxToxicities, "toxCasEdfId", Boolean.TRUE);
 					// index blendeds
 					String casEdfIdFieldName =  "chmCasEdfId";
-					Blendeds blendeds = new Blendeds();
+					Blendeds<?> blendeds = new Blendeds<>();
 					blendeds.setIndexFolderPath("indexes/blendeds");
 					blendeds.setIndexFields("rptPdfSeqId,rptAPI,rptState,rptCounty,rptOperator,rptWellName,chmCasEdfId,chmTradeName,chmSupplier,chmPurpose,chmIngredients,chmComments,rptFractureDate,toxChemicalName,toxRecognized,toxSuspected");
 					blendeds.setTaxonomyFolderPath("taxonomies/blendeds");
@@ -566,7 +566,7 @@ public class FracKhemGUIController {
 				try {
 					// index and obtain toxicities
 					// for later use indexing reports
-		    		Toxicities toxicities = new Toxicities();
+		    		Toxicities<?> toxicities = new Toxicities<>();
 		    		toxicities.setIndexFolderPath("indexes/toxicities");
 		    		toxicities.setIndexFields("toxCasEdfId,toxChemicalName,toxRecognized,toxSuspected");
 		    		toxicities.setTaxonomyFolderPath("taxonomies/toxicities");
@@ -582,7 +582,7 @@ public class FracKhemGUIController {
 					toxicities.queryViaLucene("toxCasEdfId", "*", maxToxicities, "toxCasEdfId", Boolean.TRUE);
 					// index chemicals
 					String casEdfIdFieldName =  "chmCasEdfId";
-					Chemicals chemicals = new Chemicals();
+					Chemicals<?> chemicals = new Chemicals<>();
 					chemicals.setIndexFolderPath("indexes/chemicals");
 					chemicals.setIndexFields("rptPdfSeqId,rptAPI,chmCasEdfId,chmTradeName,chmSupplier,chmPurpose,chmIngredients,chmComments,rptFractureDate,toxChemicalName,toxRecognized,toxSuspected");
 					chemicals.setTaxonomyFolderPath("taxonomies/chemicals");
@@ -617,7 +617,7 @@ public class FracKhemGUIController {
 				try {
 					// index and obtain toxicities
 					// for later use indexing reports
-		    		Toxicities toxicities = new Toxicities();
+		    		Toxicities<?> toxicities = new Toxicities<>();
 		    		toxicities.setIndexFolderPath("indexes/toxicities");
 		    		toxicities.setIndexFields("toxCasEdfId,toxChemicalName,toxRecognized,toxSuspected");
 		    		toxicities.setTaxonomyFolderPath("taxonomies/toxicities");
@@ -633,7 +633,7 @@ public class FracKhemGUIController {
 					toxicities.queryViaLucene("toxCasEdfId", "*", maxToxicities, "toxCasEdfId", Boolean.TRUE);
 					// index reports
 					String casEdfIdFieldName =  "chmCasEdfId";
-					Reports reports = new Reports();
+					Reports<?> reports = new Reports<>();
 					reports.setIndexFolderPath("indexes/reports");
 					reports.setIndexFields("rptPdfSeqId,rptAPI,rptState,rptCounty,rptOperator,rptWellName,rptFractureDate,toxRecognized,toxSuspected");
 					reports.setLevelFields("rptAPI,rptCounty,rptDatum,rptFractureDate,rptLatLng,rptLatitude,rptLongitude,rptOperator,rptProdType,rptPdfSeqId,rptPublishedDate,rptSeqId,rptState,rptTWV,rptTVD,rptWellName");
@@ -668,7 +668,7 @@ public class FracKhemGUIController {
 			public void run() {
 	            stage.getScene().setCursor(Cursor.WAIT);
 	            try {
-		    		Toxicities toxicities = new Toxicities();
+		    		Toxicities<?> toxicities = new Toxicities<>();
 		    		toxicities.setIndexFolderPath("indexes/toxicities");
 		    		toxicities.setIndexFields("toxCasEdfId,toxChemicalName,toxRecognized,toxSuspected");
 		    		toxicities.setTaxonomyFolderPath("taxonomies/toxicities");
@@ -767,10 +767,10 @@ public class FracKhemGUIController {
 			QueryResult queryResult = blendeds.queryViaLucene(queryField, queryValue, maxDocs, sortOrder, allowLeadingWildcard);
 			txtFieldQueryStat0.setText(queryResult.getCommentary());
 			// build the table column headers
-			List<TableColumn<Map,String>> dataColumns = new ArrayList<>();
+			List<TableColumn<Map<?,?>,String>> dataColumns = new ArrayList<>();
 			for (org.apache.lucene.document.Document document : queryResult.getDocuments()) {
 				for (IndexableField field : document.getFields()) {
-					TableColumn<Map,String> dataColumn = new TableColumn<>(field.name());
+					TableColumn<Map<?,?>,String> dataColumn = new TableColumn<>(field.name());
 					dataColumn.setCellValueFactory(new MapValueFactory(field.name()));
 					dataColumn.setSortable(true);
 					dataColumns.add(dataColumn);
@@ -785,7 +785,7 @@ public class FracKhemGUIController {
 			// clear the toxicity facets table view
 			tblViewFacetsToxicities0.getItems().clear();
 			// populate the toxicity facet table with data
-			ToxicityFacetRows toxicityFacetRows = new ToxicityFacetRows<>();
+			ToxicityFacetRows<?> toxicityFacetRows = new ToxicityFacetRows<>();
 			toxicityFacetRows.loadViaFacetResults(queryResult.getFacetResults());
 			tblViewFacetsToxicities0.setItems(toxicityFacetRows);
 			// add the toxicity table column headers
@@ -814,10 +814,10 @@ public class FracKhemGUIController {
 			QueryResult queryResult = chemicals.queryViaLucene(queryField, queryValue, maxDocs, sortOrder, allowLeadingWildcard);
 			txtFieldQueryStat1.setText(queryResult.getCommentary());
 			// build the table column headers
-			List<TableColumn<Map,String>> dataColumns = new ArrayList<>();
+			List<TableColumn<Map<?,?>,String>> dataColumns = new ArrayList<>();
 			for (org.apache.lucene.document.Document document : queryResult.getDocuments()) {
 				for (IndexableField field : document.getFields()) {
-					TableColumn<Map,String> dataColumn = new TableColumn<>(field.name());
+					TableColumn<Map<?,?>,String> dataColumn = new TableColumn<>(field.name());
 					dataColumn.setCellValueFactory(new MapValueFactory(field.name()));
 					dataColumn.setSortable(true);
 					dataColumns.add(dataColumn);
@@ -830,13 +830,13 @@ public class FracKhemGUIController {
 			// add the table column headers
 			tblViewQueryResults1.getColumns().setAll(chemicals.getTableColumns());
 			// build the Toxicity table view column headers
-			List<TableColumn<Map,String>> facetColumns = new ArrayList<>();
+			List<TableColumn<Map<?,?>,String>> facetColumns = new ArrayList<>();
 			for (FacetResult facetResult : queryResult.getFacetResults()) {
 				for (FacetResultNode node0 : facetResult.getFacetResultNode().subResults) {
 					if (node0.label.toString().indexOf("/Toxicity/") > -1) {
 						if (node0.label.toString().indexOf(",") == -1) {
 							System.out.println(node0.label + ": " + node0.value);
-							TableColumn<Map,String> dataColumn = new TableColumn<>(node0.label.toString());
+							TableColumn<Map<?,?>,String> dataColumn = new TableColumn<>(node0.label.toString());
 							dataColumn.setCellValueFactory(new MapValueFactory(node0.label.toString()));
 							dataColumn.setSortable(true);
 							dataColumns.add(dataColumn);
@@ -848,7 +848,7 @@ public class FracKhemGUIController {
 			// clear the toxicity facets table view
 			tblViewFacetsToxicities1.getItems().clear();
 			// populate the toxicity facet table with data
-			ToxicityFacetRows toxicityFacetRows = new ToxicityFacetRows<>();
+			ToxicityFacetRows<?> toxicityFacetRows = new ToxicityFacetRows<>();
 			toxicityFacetRows.loadViaFacetResults(queryResult.getFacetResults());
 			tblViewFacetsToxicities1.setItems(toxicityFacetRows);
 			// add the toxicity table column headers
@@ -877,10 +877,10 @@ public class FracKhemGUIController {
 			QueryResult queryResult = reports.queryViaLucene(queryField, queryValue, maxDocs, sortOrder, allowLeadingWildcard);
 			txtFieldQueryStat2.setText(queryResult.getCommentary());
 			// build the table column headers
-			List<TableColumn<Map,String>> dataColumns = new ArrayList<>();
+			List<TableColumn<Map<?,?>,String>> dataColumns = new ArrayList<>();
 			for (org.apache.lucene.document.Document document : queryResult.getDocuments()) {
 				for (IndexableField field : document.getFields()) {
-					TableColumn<Map,String> dataColumn = new TableColumn<>(field.name());
+					TableColumn<Map<?,?>,String> dataColumn = new TableColumn<>(field.name());
 					dataColumn.setCellValueFactory(new MapValueFactory(field.name()));
 					dataColumn.setSortable(true);
 					dataColumns.add(dataColumn);
@@ -895,7 +895,7 @@ public class FracKhemGUIController {
 			// clear the toxicity facets table view
 			tblViewFacetsToxicities2.getItems().clear();
 			// populate the toxicity facet table with data
-			ToxicityFacetRows toxicityFacetRows = new ToxicityFacetRows<>();
+			ToxicityFacetRows<?> toxicityFacetRows = new ToxicityFacetRows<>();
 			toxicityFacetRows.loadViaFacetResults(queryResult.getFacetResults());
 			tblViewFacetsToxicities2.setItems(toxicityFacetRows);
 			// add the toxicity table column headers
@@ -925,10 +925,10 @@ public class FracKhemGUIController {
 			QueryResult queryResult = toxicities.queryViaLucene(queryField, queryValue, maxDocs, sortOrder, allowLeadingWildcard);
 			txtFieldQueryStat3.setText(queryResult.getCommentary());
 			// build the table column headers
-			List<TableColumn<Map,String>> dataColumns = new ArrayList<>();
+			List<TableColumn<Map<?,?>,String>> dataColumns = new ArrayList<>();
 			for (org.apache.lucene.document.Document document : queryResult.getDocuments()) {
 				for (IndexableField field : document.getFields()) {
-					TableColumn<Map,String> dataColumn = new TableColumn<>(field.name());
+					TableColumn<Map<?,?>,String> dataColumn = new TableColumn<>(field.name());
 					dataColumn.setCellValueFactory(new MapValueFactory(field.name()));
 					dataColumn.setSortable(true);
 					dataColumns.add(dataColumn);
@@ -952,7 +952,7 @@ public class FracKhemGUIController {
 			// clear the toxicity facets table view
 			tblViewFacetsToxicities3.getItems().clear();
 			// populate the toxicity facet table with data
-			ToxicityFacetRows toxicityFacetRows = new ToxicityFacetRows<>();
+			ToxicityFacetRows<?> toxicityFacetRows = new ToxicityFacetRows<>();
 			toxicityFacetRows.loadViaFacetResults(queryResult.getFacetResults());
 			tblViewFacetsToxicities3.setItems(toxicityFacetRows);
 			// add the toxicity table column headers
