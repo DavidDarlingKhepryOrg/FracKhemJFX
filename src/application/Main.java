@@ -139,8 +139,6 @@ public class Main extends Application {
             // load an image
             java.awt.Image image = null;
             try {
-//                URL url = new URL("http://www.digitalphotoartistry.com/rose1.jpg");
-//                image = ImageIO.read(url);
 //                File file = new File(iconLocation);
 //                image = ImageIO.read(file);
                 URL urlIcon = Main.class.getResource(iconLocation);

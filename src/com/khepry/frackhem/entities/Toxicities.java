@@ -115,8 +115,8 @@ public class Toxicities<E> implements ObservableList<E> {
 	}
 
 	
-	public List<TableColumn> getTableColumns() {
-		List<TableColumn> list = new ArrayList<>();
+	public List<TableColumn<?,?>> getTableColumns() {
+		List<TableColumn<?,?>> list = new ArrayList<>();
 		String properties = "CAS\nEDF\nId,toxCasEdfId;Chemical\nName,toxChemicalName;Toxicity\nRecognized,toxRecognized;Toxicity\nSuspected,toxSuspected";
 		String[] keyValuePairs = properties.split(";");
 		for (String keyValuePair : keyValuePairs) {
@@ -167,7 +167,7 @@ public class Toxicities<E> implements ObservableList<E> {
 			if (!indexFolder.exists()) {
 				indexFolder.mkdir();
 			} else {
-				deleteLuceneIndex(indexFolder);
+				deleteFolder(indexFolder);
 				if (!indexFolder.exists()) {
 					indexFolder.mkdir();
 				}
@@ -177,7 +177,7 @@ public class Toxicities<E> implements ObservableList<E> {
 			if (!taxonomyFolder.exists()) {
 				taxonomyFolder.mkdir();
 			} else {
-				deleteLuceneIndex(taxonomyFolder);
+				deleteFolder(taxonomyFolder);
 				if (!taxonomyFolder.exists()) {
 					taxonomyFolder.mkdir();
 				}
@@ -441,13 +441,13 @@ public class Toxicities<E> implements ObservableList<E> {
 	}
 	
 	
-	public static void deleteLuceneIndex(File indexFolder) {
-		if (indexFolder.exists()) {
-			File[] files = indexFolder.listFiles();
+	public static void deleteFolder(File folder) {
+		if (folder.exists()) {
+			File[] files = folder.listFiles();
 			for (File file : files) {
 				file.delete();
 			}
-			indexFolder.delete();
+			folder.delete();
 		}
 	}
 	
