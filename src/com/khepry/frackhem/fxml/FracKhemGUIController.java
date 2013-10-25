@@ -34,7 +34,6 @@ import java.util.Scanner;
 import java.util.prefs.Preferences;
 
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -76,7 +75,6 @@ import com.khepry.frackhem.entities.Report;
 import com.khepry.frackhem.entities.Reports;
 import com.khepry.frackhem.entities.Toxicities;
 import com.khepry.frackhem.entities.Toxicity;
-import com.khepry.frackhem.entities.ToxicityFacetRow;
 import com.khepry.frackhem.entities.ToxicityFacetRows;
 import com.khepry.handlers.queue.MessageQueueMonitor;
 import com.khepry.utilities.GenericUtilities;
@@ -942,7 +940,7 @@ public class FracKhemGUIController {
 			// populate the table with data
 			tblViewQueryResults3.setItems(toxicities);
 			// add the table column headers
-			List<TableColumn> tableColumns = toxicities.getTableColumns();
+			List<TableColumn<?,?>> tableColumns = toxicities.getTableColumns();
 			if (outputDebugInfo) {
 				for (TableColumn tableColumn : tableColumns) {
 					System.out.println("Property text: " + tableColumn.textProperty().get());

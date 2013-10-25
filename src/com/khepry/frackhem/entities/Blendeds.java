@@ -68,7 +68,6 @@ import com.npstrandberg.simplemq.MessageInput;
 import com.npstrandberg.simplemq.MessageQueue;
 
 import javafx.beans.InvalidationListener;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -147,7 +146,7 @@ public class Blendeds<E> implements ObservableList<E> {
 			if (!indexFolder.exists()) {
 				indexFolder.mkdir();
 			} else {
-				deleteLuceneIndex(indexFolder);
+				deleteFolder(indexFolder);
 				if (!indexFolder.exists()) {
 					indexFolder.mkdir();
 				}
@@ -157,7 +156,7 @@ public class Blendeds<E> implements ObservableList<E> {
 			if (!taxonomyFolder.exists()) {
 				taxonomyFolder.mkdir();
 			} else {
-				deleteLuceneIndex(taxonomyFolder);
+				deleteFolder(taxonomyFolder);
 				if (!taxonomyFolder.exists()) {
 					taxonomyFolder.mkdir();
 				}
@@ -445,13 +444,13 @@ public class Blendeds<E> implements ObservableList<E> {
 	}
 	
 	
-	public static void deleteLuceneIndex(File indexFolder) {
-		if (indexFolder.exists()) {
-			File[] files = indexFolder.listFiles();
+	public static void deleteFolder(File folder) {
+		if (folder.exists()) {
+			File[] files = folder.listFiles();
 			for (File file : files) {
 				file.delete();
 			}
-			indexFolder.delete();
+			folder.delete();
 		}
 	}
 	

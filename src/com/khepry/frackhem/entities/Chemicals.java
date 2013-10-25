@@ -68,7 +68,6 @@ import com.npstrandberg.simplemq.MessageInput;
 import com.npstrandberg.simplemq.MessageQueue;
 
 import javafx.beans.InvalidationListener;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -102,8 +101,7 @@ public class Chemicals<E> implements ObservableList<E> {
 		loadViaDocuments(documents);
 	}
 	
-	public void loadViaDocuments(
-			List<Document> documents) {
+	public void loadViaDocuments(List<Document> documents) {
 		list.clear();
 		for (Document document : documents) {
 			Chemical chemical = new Chemical(document);
@@ -112,8 +110,8 @@ public class Chemicals<E> implements ObservableList<E> {
 	}
 
 	
-	public List<TableColumn> getTableColumns() {
-		List<TableColumn> list = new ArrayList<TableColumn>();
+	public List<TableColumn<?,?>> getTableColumns() {
+		List<TableColumn<?,?>> list = new ArrayList<>();
 		String properties = "SeqId,chmSeqId;Pdf\nSeqId,rptPdfSeqId;API,rptAPI;Fracture\nDate,rptFractureDate;Row,chmRow;CAS\nNumber,chmCasEdfId;Trade\nName,chmTradeName;Supplier,chmSupplier;Purpose,chmPurpose;Ingredients,chmIngredients;Additive\nConcentration,chmAdditiveConcentration;HF Fluid\nConcentration,chmHfFluidConcentration;Comments,chmComments;CAS\nType,casType;Chemical\nName,toxChemicalName;Toxicity\nRecognized,toxRecognized;Toxicity\nSuspected,toxSuspected";
 		String[] keyValuePairs = properties.split(";");
 		for (String keyValuePair : keyValuePairs) {
@@ -149,7 +147,7 @@ public class Chemicals<E> implements ObservableList<E> {
 			if (!indexFolder.exists()) {
 				indexFolder.mkdir();
 			} else {
-				deleteLuceneIndex(indexFolder);
+				deleteFolder(indexFolder);
 				if (!indexFolder.exists()) {
 					indexFolder.mkdir();
 				}
@@ -159,7 +157,7 @@ public class Chemicals<E> implements ObservableList<E> {
 			if (!taxonomyFolder.exists()) {
 				taxonomyFolder.mkdir();
 			} else {
-				deleteLuceneIndex(taxonomyFolder);
+				deleteFolder(taxonomyFolder);
 				if (!taxonomyFolder.exists()) {
 					taxonomyFolder.mkdir();
 				}
@@ -448,13 +446,13 @@ public class Chemicals<E> implements ObservableList<E> {
 	}
 	
 	
-	public static void deleteLuceneIndex(File indexFolder) {
-		if (indexFolder.exists()) {
-			File[] files = indexFolder.listFiles();
+	public static void deleteFolder(File folder) {
+		if (folder.exists()) {
+			File[] files = folder.listFiles();
 			for (File file : files) {
 				file.delete();
 			}
-			indexFolder.delete();
+			folder.delete();
 		}
 	}
 	
