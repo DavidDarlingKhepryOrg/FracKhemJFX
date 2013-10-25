@@ -275,10 +275,9 @@ public class Chemicals<E> implements ObservableList<E> {
 							// build up "stats" taxonomy categories
 							for (String statsKey : mapStatsFields.keySet()) {
 								if (mapIndexFields.containsKey(statsKey)) {
-									String statsText = mapStatsFields.get(statsKey);
 									String fieldValue = mapIndexFields.get(statsKey);
-									if (!statsText.trim().equals("") && !fieldValue.trim().equals("")) {
-										taxonomyCategories.add(new CategoryPath("Chemicals", statsText, fieldValue));
+									if (!statsKey.trim().equals("") && !fieldValue.trim().equals("")) {
+										taxonomyCategories.add(new CategoryPath("Chemicals", statsKey, fieldValue));
 									}
 								}
 							}

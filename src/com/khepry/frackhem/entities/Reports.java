@@ -274,10 +274,9 @@ public class Reports<E> implements ObservableList<E> {
 								// build up "stats" taxonomy categories
 								for (String statsKey : mapStatsFields.keySet()) {
 									if (mapLevelFields.containsKey(statsKey)) {
-										String statsText = mapStatsFields.get(statsKey);
 										String levelValue = mapLevelFields.get(statsKey);
-										if (!statsText.trim().equals("") && !levelValue.trim().equals("")) {
-											taxonomyCategories.add(new CategoryPath("Reports", statsText, levelValue));
+										if (!statsKey.trim().equals("") && !levelValue.trim().equals("")) {
+											taxonomyCategories.add(new CategoryPath("Reports", statsKey, levelValue));
 										}
 									}
 								}
@@ -368,10 +367,9 @@ public class Reports<E> implements ObservableList<E> {
 					// build up "stats" taxonomy categories
 					for (String statsKey : mapStatsFields.keySet()) {
 						if (mapLevelFields.containsKey(statsKey)) {
-							String statsText = mapStatsFields.get(statsKey);
 							String levelValue = mapLevelFields.get(statsKey);
-							if (!statsText.trim().equals("") && !levelValue.trim().equals("")) {
-								taxonomyCategories.add(new CategoryPath("Reports", statsText, levelValue));
+							if (!statsKey.trim().equals("") && !levelValue.trim().equals("")) {
+								taxonomyCategories.add(new CategoryPath("Reports", statsKey, levelValue));
 							}
 						}
 					}

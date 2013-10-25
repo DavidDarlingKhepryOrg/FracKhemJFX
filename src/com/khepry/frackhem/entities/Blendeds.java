@@ -274,10 +274,9 @@ public class Blendeds<E> implements ObservableList<E> {
 							// build up "stats" taxonomy categories
 							for (String statsKey : mapStatsFields.keySet()) {
 								if (mapIndexFields.containsKey(statsKey)) {
-									String statsText = mapStatsFields.get(statsKey);
 									String fieldValue = mapIndexFields.get(statsKey);
-									if (!statsText.trim().equals("") && !fieldValue.trim().equals("")) {
-										taxonomyCategories.add(new CategoryPath("Blendeds", statsText, fieldValue));
+									if (!statsKey.trim().equals("") && !fieldValue.trim().equals("")) {
+										taxonomyCategories.add(new CategoryPath("Blendeds", statsKey, fieldValue));
 									}
 								}
 							}
