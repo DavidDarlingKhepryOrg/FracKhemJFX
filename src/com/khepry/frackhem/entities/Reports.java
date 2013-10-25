@@ -87,6 +87,7 @@ public class Reports<E> implements ObservableList<E> {
 	private String indexFolderPath = "indexes/reports";
 	private String indexFields = "rptPdfSeqId,rptAPI,rptState,rptCounty,rptOperator,rptWellName,rptFractureDate,toxRecognized,toxSuspected";
 	private String levelFields = "rptAPI,rptCounty,rptDatum,rptFractureDate,rptLatLng,rptLatitude,rptLongitude,rptOperator,rptProdType,rptPdfSeqId,rptPublishedDate,rptSeqId,rptState,rptTWV,rptTVD,rptWellName";
+	private String statsFields = "rptCounty:County,rptOperator:Operator,rptProdType:ProdType,rptState:State";
 	private String taxonomyFolderPath = "taxonomies/reports";
 	private Integer progressInterval = 10000;
 
@@ -177,9 +178,11 @@ public class Reports<E> implements ObservableList<E> {
 				Map<String, String> mapBreakFields = new LinkedHashMap<>();
 				Map<String, String> mapIndexFields = new LinkedHashMap<>();
 				Map<String, String> mapLevelFields = new LinkedHashMap<>();
+				Map<String, String> mapStatsFields = new LinkedHashMap<>();
 				Map<String, Integer> mapColIndexes = new LinkedHashMap<>();
 				
 				String[] pieces;
+				String[] tuples;
 				
 				pieces = indexFields.split(",");
 				for (String indexField : pieces) {
@@ -190,6 +193,12 @@ public class Reports<E> implements ObservableList<E> {
 				for (String levelField : pieces) {
 					mapBreakFields.put(levelField, "");
 					mapLevelFields.put(levelField, "");
+				}
+
+				pieces = statsFields.split(",");
+				for (String statField : pieces) {
+					tuples = statField.split(":"); 
+					mapStatsFields.put(tuples[0], tuples.length > 1 ? tuples[1] : tuples[0]);
 				}
 
 				Map<String, Map<String, String>> mapToxValues = new LinkedHashMap<>();
@@ -242,6 +251,7 @@ public class Reports<E> implements ObservableList<E> {
 							mapBreakFields.putAll(mapLevelFields);
 							firstDataRecordHandled = true;
 						}
+						// if there is a "level break"
 						if (!mapLevelFields.equals(mapBreakFields)) {
 							Document tgtDocument = new Document();
 							for (Map.Entry<String, String> entry : mapBreakFields.entrySet()) {
@@ -255,10 +265,20 @@ public class Reports<E> implements ObservableList<E> {
 								sbIndex.append(fieldValue);
 								sbIndex.append(" ");
 								tgtDocument.add(new TextField(fieldName, fieldValue, Store.YES));
-								// build up taxonomy categories
+								// build up "Toxicity" taxonomy categories
 								for (String value : fieldValue.replace(" ", ",").split(",")) {
 									if (!value.trim().equals("")) {
 										taxonomyCategories.add(new CategoryPath(fieldName, "Toxicity", value));
+									}
+								}
+								// build up "stats" taxonomy categories
+								for (String statsKey : mapStatsFields.keySet()) {
+									if (mapLevelFields.containsKey(statsKey)) {
+										String statsText = mapStatsFields.get(statsKey);
+										String levelValue = mapLevelFields.get(statsKey);
+										if (!statsText.trim().equals("") && !levelValue.trim().equals("")) {
+											taxonomyCategories.add(new CategoryPath("Reports", statsText, levelValue));
+										}
 									}
 								}
 							}
@@ -339,10 +359,20 @@ public class Reports<E> implements ObservableList<E> {
 					sbIndex.append(fieldValue);
 					sbIndex.append(" ");
 					tgtDocument.add(new TextField(fieldName, fieldValue, Store.YES));
-					// build up taxonomy categories
+					// build up "Toxicity" taxonomy categories
 					for (String value : fieldValue.replace(" ", ",").split(",")) {
 						if (!value.trim().equals("")) {
 							taxonomyCategories.add(new CategoryPath(fieldName, "Toxicity", value));
+						}
+					}
+					// build up "stats" taxonomy categories
+					for (String statsKey : mapStatsFields.keySet()) {
+						if (mapLevelFields.containsKey(statsKey)) {
+							String statsText = mapStatsFields.get(statsKey);
+							String levelValue = mapLevelFields.get(statsKey);
+							if (!statsText.trim().equals("") && !levelValue.trim().equals("")) {
+								taxonomyCategories.add(new CategoryPath("Reports", statsText, levelValue));
+							}
 						}
 					}
 				}
@@ -545,6 +575,14 @@ public class Reports<E> implements ObservableList<E> {
 
 	public void setIndexFields(String indexFields) {
 		this.indexFields = indexFields;
+	}
+
+	public String getStatsFields() {
+		return statsFields;
+	}
+
+	public void setStatsFields(String statsFields) {
+		this.statsFields = statsFields;
 	}
 
 	public String getLevelFields() {
