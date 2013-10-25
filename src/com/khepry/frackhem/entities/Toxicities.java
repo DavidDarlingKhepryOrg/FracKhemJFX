@@ -82,6 +82,7 @@ public class Toxicities<E> implements ObservableList<E> {
 
 	private String indexFolderPath = "indexes/toxicities";
 	private String indexFields = "toxCasEdfId,toxChemicalName,toxRecognized,toxSuspected";
+	private String statsFields = "toxRecognized:Recognized,toxSuspected:Suspected";
 	private String taxonomyFolderPath = "taxonomies/toxicities";
 	private Integer progressInterval = 100;
 	
@@ -186,12 +187,21 @@ public class Toxicities<E> implements ObservableList<E> {
 			if (indexFolder.exists() && taxonomyFolder.exists()) {
 
 				List<String> colHeaders = new ArrayList<>();
-				Map<String, String> mapFields = new LinkedHashMap<>();
+				Map<String, String> mapIndexFields = new LinkedHashMap<>();
+				Map<String, String> mapStatsFields = new LinkedHashMap<>();
 
 				String[] pieces;
+				String[] tuples;
+				
 				pieces = indexFields.split(",");
 				for (String indexField : pieces) {
-					mapFields.put(indexField, indexField);
+					mapIndexFields.put(indexField, indexField);
+				}
+				
+				pieces = statsFields.split(",");
+				for (String statField : pieces) {
+					tuples = statField.split(":"); 
+					mapStatsFields.put(tuples[0], tuples.length > 1 ? tuples[1] : tuples[0]);
 				}
 
 				SimpleFSDirectory indexDirectory = new SimpleFSDirectory(indexFolder);
@@ -223,7 +233,7 @@ public class Toxicities<E> implements ObservableList<E> {
 							for (int i = 0; i < pieces.length; i++) {
 								Field field = new TextField(colHeaders.get(i), pieces[i].trim(), Store.YES);
 								document.add(field);
-								if (mapFields.containsKey(colHeaders.get(i))) {
+								if (mapIndexFields.containsKey(colHeaders.get(i))) {
 									if (!pieces[i].trim().equals("")) {
 										sb.append(pieces[i].trim());
 										sb.append(" ");
@@ -256,6 +266,17 @@ public class Toxicities<E> implements ObservableList<E> {
 								for (String value : toxSuspected.replace(" ", ",").split(",")) {
 									if (!value.trim().equals("")) {
 										taxonomyCategories.add(new CategoryPath("toxSuspected",	"Toxicity", value));
+									}
+								}
+							}
+							
+							// build up "stats" taxonomy categories
+							for (String statsKey : mapStatsFields.keySet()) {
+								if (mapIndexFields.containsKey(statsKey)) {
+									String statsText = mapStatsFields.get(statsKey);
+									String fieldValue = mapIndexFields.get(statsKey);
+									if (!statsText.trim().equals("") && !fieldValue.trim().equals("")) {
+										taxonomyCategories.add(new CategoryPath("Toxicities", statsText, fieldValue));
 									}
 								}
 							}
@@ -466,6 +487,14 @@ public class Toxicities<E> implements ObservableList<E> {
 
 	public void setIndexFields(String indexFields) {
 		this.indexFields = indexFields;
+	}
+
+	public String getStatsFields() {
+		return statsFields;
+	}
+
+	public void setStatsFields(String statsFields) {
+		this.statsFields = statsFields;
 	}
 
 	public String getTaxonomyFolderPath() {
