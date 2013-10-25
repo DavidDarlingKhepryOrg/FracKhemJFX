@@ -117,8 +117,8 @@
     </TabPane>
   </center>
   <left>
-    <ScrollPane fx:id="scrollPaneOperators" prefWidth="150.0">
-      <Accordion fx:id="accordionOperators" />
+    <ScrollPane fx:id="scrollPaneFacets" prefWidth="150.0">
+      <Accordion fx:id="accordionFacets" />
     </ScrollPane>
   </left>
   <right>

@@ -40,6 +40,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
@@ -48,6 +49,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
 import javafx.scene.control.cell.MapValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -111,10 +113,10 @@ public class FracKhemGUIController {
 	private Menu mnuFileRecent; 
 
 	@FXML
-	private Accordion accordionOperators;
+	private Accordion accordionFacets;
 
 	@FXML
-	private ScrollPane scrollPaneOperators;
+	private ScrollPane scrollPaneFacets;
 
 	@FXML
 	private Accordion accordionToxicities;
@@ -304,6 +306,46 @@ public class FracKhemGUIController {
 			menuItem.setOnAction(recentFileEventHandler);
 			mnuFileRecent.getItems().add(menuItem);
 		}
+
+		// load the titled panes for "facets"
+        for (Integer d = 1; d <= 9; d++) {
+        	TitledPane titledPaneFacet = new TitledPane();
+        	Accordion accordionValues = new Accordion();
+        	Integer maxYears = 0;
+            for (Integer y = 1; y <= 9; y++) {
+	        	VBox vbox = new VBox();
+	        	Integer maxUpdates = 0;
+	            for (Integer u = 1; u <= 9; u++) {
+	                MenuBar menuBar = new MenuBar();
+	                menuBar.setStyle("-fx-background-color:lightcyan;");
+	                Menu menuUpdate = new Menu("Update " + u);
+	    			MenuItem menuView = new MenuItem("View");
+	    			menuView.setOnAction(recentFileEventHandler);
+	    			menuUpdate.getItems().add(menuView);
+	    			Menu export = new Menu("Export");
+	    			MenuItem menuHTML = new MenuItem("as HTML...");
+	    			menuHTML.setOnAction(recentFileEventHandler);
+	    			export.getItems().add(menuHTML);
+	    			MenuItem menuPDF = new MenuItem("as PDF...");
+	    			menuPDF.setOnAction(recentFileEventHandler);
+	    			export.getItems().add(menuPDF);
+	    			menuUpdate.getItems().add(export);
+	        		menuBar.getMenus().add(menuUpdate);
+	        		vbox.getChildren().add(menuBar);
+	        		maxUpdates++;
+	            }
+	        	TitledPane titledPaneYear = new TitledPane("Value " + y + " (" + maxUpdates + ")", vbox);
+	        	titledPaneYear.setStyle("-fx-color:lightgreen;");
+	        	titledPaneYear.setAnimated(false);
+	        	accordionValues.getPanes().add(titledPaneYear);
+	        	maxYears++;
+            }
+        	titledPaneFacet = new TitledPane("Facet " + d + " (" + maxYears + ")", accordionValues);
+        	titledPaneFacet.setAnimated(false);
+            accordionFacets.getPanes().add(titledPaneFacet);
+        }
+        // bind the width of the accordionPanel to the width of the scrollPane
+        accordionFacets.prefWidthProperty().bind(scrollPaneFacets.widthProperty());
 		
 		// set the stage title
         if (this.stage != null) {
