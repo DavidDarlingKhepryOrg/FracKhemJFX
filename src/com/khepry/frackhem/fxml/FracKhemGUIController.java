@@ -34,6 +34,8 @@ import java.util.Scanner;
 import java.util.prefs.Preferences;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -106,6 +108,7 @@ public class FracKhemGUIController {
     
 	private Integer maxToxicities = 10000;
 
+	private Reports<Report> reports = new Reports<>();
 
 	private Stage stage;
 	
@@ -346,6 +349,16 @@ public class FracKhemGUIController {
         }
         // bind the width of the accordionPanel to the width of the scrollPane
         accordionFacets.prefWidthProperty().bind(scrollPaneFacets.widthProperty());
+        
+        // listen for TextField text changes
+        txtFieldQueryText2.textProperty().addListener(new ChangeListener<String>() {
+
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				txtFieldQueryText2_onChange(null);
+			}
+        	
+        });
 		
 		// set the stage title
         if (this.stage != null) {
@@ -388,6 +401,8 @@ public class FracKhemGUIController {
 	private void onMnuFileClose(ActionEvent event) {
 		// save the user's preferences
 		savePreferences();
+		// terminate various objects
+		reports.terminate();
 		// stop the message queue monitors
 		System.out.println(initStageTitle + " terminating progress monitors.");
 		for (Thread thread : messageQueueMonitorThreads) {
@@ -907,41 +922,92 @@ public class FracKhemGUIController {
 		String queryField = "text";
 		String queryValue = txtFieldQueryText2.getText().trim();
 		stage.getScene().setCursor(Cursor.WAIT);
-		try {
-			Boolean allowLeadingWildcard = Boolean.FALSE;
-			String sortOrder = "rptPdfSeqId";
-			Integer maxDocs = 50000;
-			Reports<Report> reports = new Reports<>();
-			reports.setIndexFolderPath(indexFolderPath);
-			reports.setTaxonomyFolderPath(taxonomyFolderPath);
-			QueryResult queryResult = reports.queryViaLucene(queryField, queryValue, maxDocs, sortOrder, allowLeadingWildcard);
-			txtFieldQueryStat2.setText(queryResult.getCommentary());
-			// build the table column headers
-			List<TableColumn<Map<?,?>,String>> dataColumns = new ArrayList<>();
-			for (org.apache.lucene.document.Document document : queryResult.getDocuments()) {
-				for (IndexableField field : document.getFields()) {
-					TableColumn<Map<?,?>,String> dataColumn = new TableColumn<>(field.name());
-					dataColumn.setCellValueFactory(new MapValueFactory(field.name()));
-					dataColumn.setSortable(true);
-					dataColumns.add(dataColumn);
+		tblViewQueryResults2.getItems().clear();
+		txtFieldQueryStat2.setText("");
+		if (!queryValue.equals("")) {
+			try {
+				Boolean allowLeadingWildcard = Boolean.FALSE;
+				String sortOrder = "rptPdfSeqId";
+				Integer maxDocs = 50000;
+				reports.setIndexFolderPath(indexFolderPath);
+				reports.setTaxonomyFolderPath(taxonomyFolderPath);
+				QueryResult queryResult = reports.queryViaLucene(queryField, queryValue, maxDocs, sortOrder, allowLeadingWildcard);
+				txtFieldQueryStat2.setText(queryResult.getCommentary());
+				// build the table column headers
+				List<TableColumn<Map<?,?>,String>> dataColumns = new ArrayList<>();
+				for (org.apache.lucene.document.Document document : queryResult.getDocuments()) {
+					for (IndexableField field : document.getFields()) {
+						TableColumn<Map<?,?>,String> dataColumn = new TableColumn<>(field.name());
+						dataColumn.setCellValueFactory(new MapValueFactory(field.name()));
+						dataColumn.setSortable(true);
+						dataColumns.add(dataColumn);
+					}
+					break;
 				}
-				break;
+				// populate the table with data
+				tblViewQueryResults2.setItems(reports);
+				// add the table column headers
+				tblViewQueryResults2.getColumns().setAll(reports.getTableColumns());
+				// clear the toxicity facets table view
+				tblViewFacetsToxicities2.getItems().clear();
+				// populate the toxicity facet table with data
+				ToxicityFacetRows<?> toxicityFacetRows = new ToxicityFacetRows<>();
+				toxicityFacetRows.loadViaFacetResults(queryResult.getFacetResults());
+				tblViewFacetsToxicities2.setItems(toxicityFacetRows);
+				// add the toxicity table column headers
+				tblViewFacetsToxicities2.getColumns().setAll(toxicityFacetRows.getTableColumns());
+			} catch (IOException | ParseException e) {
+				e.printStackTrace(System.err);
 			}
-			tblViewQueryResults2.getItems().clear();
-			// populate the table with data
-			tblViewQueryResults2.setItems(reports);
-			// add the table column headers
-			tblViewQueryResults2.getColumns().setAll(reports.getTableColumns());
-			// clear the toxicity facets table view
-			tblViewFacetsToxicities2.getItems().clear();
-			// populate the toxicity facet table with data
-			ToxicityFacetRows<?> toxicityFacetRows = new ToxicityFacetRows<>();
-			toxicityFacetRows.loadViaFacetResults(queryResult.getFacetResults());
-			tblViewFacetsToxicities2.setItems(toxicityFacetRows);
-			// add the toxicity table column headers
-			tblViewFacetsToxicities2.getColumns().setAll(toxicityFacetRows.getTableColumns());
-		} catch (IOException | ParseException e) {
-			e.printStackTrace(System.err);
+		}
+		stage.getScene().setCursor(Cursor.DEFAULT);
+    }
+    
+    
+    @FXML
+    private void txtFieldQueryText2_onChange(ActionEvent event) {
+		String indexFolderPath = "indexes/reports";
+		String taxonomyFolderPath = "taxonomies/reports";
+		String queryField = "text";
+		String queryValue = txtFieldQueryText2.getText().trim();
+		stage.getScene().setCursor(Cursor.WAIT);
+		tblViewQueryResults2.getItems().clear();
+		txtFieldQueryStat2.setText("");
+		if (!queryValue.equals("")) {
+			try {
+				Boolean allowLeadingWildcard = Boolean.FALSE;
+				String sortOrder = "rptPdfSeqId";
+				Integer maxDocs = 50;
+				reports.setIndexFolderPath(indexFolderPath);
+				reports.setTaxonomyFolderPath(taxonomyFolderPath);
+				QueryResult queryResult = reports.facetViaLucene(queryField, queryValue, maxDocs, sortOrder, allowLeadingWildcard);
+				txtFieldQueryStat2.setText(queryResult.getCommentary("", "Press <Enter> to see full results."));
+				// build the table column headers
+				List<TableColumn<Map<?,?>,String>> dataColumns = new ArrayList<>();
+				for (org.apache.lucene.document.Document document : queryResult.getDocuments()) {
+					for (IndexableField field : document.getFields()) {
+						TableColumn<Map<?,?>,String> dataColumn = new TableColumn<>(field.name());
+						dataColumn.setCellValueFactory(new MapValueFactory(field.name()));
+						dataColumn.setSortable(true);
+						dataColumns.add(dataColumn);
+					}
+					break;
+				}
+				// populate the table with data
+				tblViewQueryResults2.setItems(reports);
+				// add the table column headers
+				tblViewQueryResults2.getColumns().setAll(reports.getTableColumns());
+				// clear the toxicity facets table view
+				tblViewFacetsToxicities2.getItems().clear();
+				// populate the toxicity facet table with data
+				ToxicityFacetRows<?> toxicityFacetRows = new ToxicityFacetRows<>();
+				toxicityFacetRows.loadViaFacetResults(queryResult.getFacetResults());
+				tblViewFacetsToxicities2.setItems(toxicityFacetRows);
+				// add the toxicity table column headers
+				tblViewFacetsToxicities2.getColumns().setAll(toxicityFacetRows.getTableColumns());
+			} catch (IOException | ParseException e) {
+				e.printStackTrace(System.err);
+			}
 		}
 		stage.getScene().setCursor(Cursor.DEFAULT);
     }

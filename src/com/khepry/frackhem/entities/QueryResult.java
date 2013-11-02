@@ -32,6 +32,9 @@ public class QueryResult {
 	private FacetsCollector facetsCollector;
 	private List<Document> documents = new ArrayList<>();
 	
+	private boolean notValid = Boolean.FALSE;
+	private String message = "";
+	
 	private Long bgnTime = System.currentTimeMillis();
 	
 	public QueryResult() {
@@ -49,14 +52,16 @@ public class QueryResult {
 		this.topFieldCollector = topFieldCollector;
 		facetsCollector.reset();
 		documents.clear();
+		notValid = Boolean.FALSE;
+		message = "";
 	}
 	
 	public String getCommentary() {
 		return "Query returned " + getScoreDocsCount() + " total hits and " + getFacetsResultsSize() + " facet results in " + getElapsedSeconds("0.0000") + " seconds.";
 	}
 	
-	public String getCommentary(String preface) {
-		return preface + " " + getCommentary().toLowerCase();
+	public String getCommentary(String preface, String suffix) {
+		return preface + " " + getCommentary().toLowerCase() + " " + suffix;
 	}
 	
 	public List<FacetResult> getFacetResults() throws IOException {
@@ -142,5 +147,21 @@ public class QueryResult {
 
 	public void setDocuments(List<Document> documents) {
 		this.documents = documents;
+	}
+
+	public boolean isNotValid() {
+		return notValid;
+	}
+
+	public void setNotValid(boolean notValid) {
+		this.notValid = notValid;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
 	}
 }
