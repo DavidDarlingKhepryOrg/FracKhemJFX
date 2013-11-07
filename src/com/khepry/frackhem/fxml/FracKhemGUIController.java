@@ -36,6 +36,7 @@ import java.util.prefs.Preferences;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -109,6 +110,7 @@ public class FracKhemGUIController {
 	private Integer maxToxicities = 10000;
 
 	private Reports<Report> reports = new Reports<>();
+	private Toxicities<Toxicity> toxicities = new Toxicities<>();
 
 	private Stage stage;
 	
@@ -350,12 +352,22 @@ public class FracKhemGUIController {
         // bind the width of the accordionPanel to the width of the scrollPane
         accordionFacets.prefWidthProperty().bind(scrollPaneFacets.widthProperty());
         
-        // listen for TextField text changes
+        // listen for changes to TextField2's text
         txtFieldQueryText2.textProperty().addListener(new ChangeListener<String>() {
 
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				txtFieldQueryText2_onChange(null);
+			}
+        	
+        });
+        
+        // listen for changes to TextField3's text
+        txtFieldQueryText3.textProperty().addListener(new ChangeListener<String>() {
+
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				txtFieldQueryText3_onChange(null);
 			}
         	
         });
@@ -403,6 +415,7 @@ public class FracKhemGUIController {
 		savePreferences();
 		// terminate various objects
 		reports.terminate();
+		toxicities.terminate();
 		// stop the message queue monitors
 		System.out.println(initStageTitle + " terminating progress monitors.");
 		for (Thread thread : messageQueueMonitorThreads) {
@@ -1025,10 +1038,64 @@ public class FracKhemGUIController {
 			Boolean allowLeadingWildcard = Boolean.FALSE;
 			String sortOrder = "toxCasEdfId";
 			Integer maxDocs = 10000;
-			Toxicities<Toxicity> toxicities = new Toxicities<>();
 			toxicities.setIndexFolderPath(indexFolderPath);
 			toxicities.setTaxonomyFolderPath(taxonomyFolderPath);
 			QueryResult queryResult = toxicities.queryViaLucene(queryField, queryValue, maxDocs, sortOrder, allowLeadingWildcard);
+			txtFieldQueryStat3.setText(queryResult.getCommentary());
+			// build the table column headers
+			List<TableColumn<Map<?,?>,String>> dataColumns = new ArrayList<>();
+			for (org.apache.lucene.document.Document document : queryResult.getDocuments()) {
+				for (IndexableField field : document.getFields()) {
+					TableColumn<Map<?,?>,String> dataColumn = new TableColumn<>(field.name());
+					dataColumn.setCellValueFactory(new MapValueFactory(field.name()));
+					dataColumn.setSortable(true);
+					dataColumns.add(dataColumn);
+					if (outputDebugInfo) {
+						System.out.println("Toxicity column name: " + field.name());
+					}
+				}
+				break;
+			}
+			// populate the table with data
+			tblViewQueryResults3.setItems(toxicities);
+			// add the table column headers
+			List<TableColumn<?,?>> tableColumns = toxicities.getTableColumns();
+			if (outputDebugInfo) {
+				for (TableColumn tableColumn : tableColumns) {
+					System.out.println("Property text: " + tableColumn.textProperty().get());
+				}
+			}
+			tblViewQueryResults3.getColumns().setAll(tableColumns);
+			// clear the toxicity facets table view
+			tblViewFacetsToxicities3.getItems().clear();
+			// populate the toxicity facet table with data
+			ToxicityFacetRows<?> toxicityFacetRows = new ToxicityFacetRows<>();
+			toxicityFacetRows.loadViaFacetResults(queryResult.getFacetResults());
+			tblViewFacetsToxicities3.setItems(toxicityFacetRows);
+			// add the toxicity table column headers
+			tblViewFacetsToxicities3.getColumns().setAll(toxicityFacetRows.getTableColumns());
+		} catch (IOException | ParseException e) {
+			e.printStackTrace(System.err);
+		}
+		stage.getScene().setCursor(Cursor.DEFAULT);
+    }
+    
+    
+    @FXML
+    private void txtFieldQueryText3_onChange(ActionEvent event) {
+		String indexFolderPath = "indexes/toxicities";
+		String taxonomyFolderPath = "taxonomies/toxicities";
+		String queryField = "text";
+		String queryValue = txtFieldQueryText3.getText().trim();
+		stage.getScene().setCursor(Cursor.WAIT);
+		try {
+
+			Boolean allowLeadingWildcard = Boolean.FALSE;
+			String sortOrder = "toxCasEdfId";
+			Integer maxDocs = 10000;
+			toxicities.setIndexFolderPath(indexFolderPath);
+			toxicities.setTaxonomyFolderPath(taxonomyFolderPath);
+			QueryResult queryResult = toxicities.facetViaLucene(queryField, queryValue, maxDocs, sortOrder, allowLeadingWildcard);
 			txtFieldQueryStat3.setText(queryResult.getCommentary());
 			// build the table column headers
 			List<TableColumn<Map<?,?>,String>> dataColumns = new ArrayList<>();

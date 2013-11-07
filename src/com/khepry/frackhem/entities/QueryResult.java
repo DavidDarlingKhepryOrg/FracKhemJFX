@@ -66,22 +66,30 @@ public class QueryResult {
 	
 	public List<FacetResult> getFacetResults() throws IOException {
 		List<FacetResult> facetResults = new ArrayList<>();
-		for (FacetResult facetResult : facetsCollector.getFacetResults()) {
-			facetResults.add(facetResult);
+		if (facetsCollector != null && facetsCollector.getFacetResults() != null) {
+			for (FacetResult facetResult : facetsCollector.getFacetResults()) {
+				facetResults.add(facetResult);
+			}
 		}
 		return facetResults;
 	}
 	
 	public List<ScoreDoc> getScoreDocs() {
 		List<ScoreDoc> scoreDocs = new ArrayList<>();
-		for (ScoreDoc scoreDoc : topFieldCollector.topDocs().scoreDocs) {
-			scoreDocs.add(scoreDoc);
+		if (topFieldCollector != null && topFieldCollector.topDocs() != null) {
+			for (ScoreDoc scoreDoc : topFieldCollector.topDocs().scoreDocs) {
+				scoreDocs.add(scoreDoc);
+			}
 		}
 		return scoreDocs;
 	}
 	
 	public Integer getScoreDocsCount() {
-		return topFieldCollector.topDocs().totalHits;
+		Integer count = 0;
+		if (topFieldCollector != null && topFieldCollector.topDocs() != null) {
+			count = topFieldCollector.topDocs().totalHits;
+		}
+		return count;
 	}
 	
 	public TopFieldCollector getTopFieldCollector() {

@@ -538,7 +538,7 @@ public class Reports<E> implements ObservableList<E> {
 			queryResult = initialize(indexFolderPath, taxonomyFolderPath);
 		}
 		
-		if (!queryResult.isNotValid()) {
+		if (!queryResult.isNotValid() && !queryValue.equals("")) {
 			QueryParser parser = new QueryParser(Version.LUCENE_44,	queryField, analyzer);
 			parser.setAllowLeadingWildcard(allowLeadingWildcard);
 			Query query = parser.parse(queryValue);
@@ -586,8 +586,8 @@ public class Reports<E> implements ObservableList<E> {
 //			}
 //			queryResult.setDocuments(documents);
 			
-			for (FacetResult facetResult : queryResult.getFacetsCollector().getFacetResults()) {
-				if (outputDebugInfo) {
+			if (outputDebugInfo) {
+				for (FacetResult facetResult : queryResult.getFacetsCollector().getFacetResults()) {
 					for (FacetResultNode node0 : facetResult.getFacetResultNode().subResults) {
 						if (node0.label.toString().indexOf(",") == -1) {
 							System.out.println(node0.label + ": " + node0.value);
@@ -672,8 +672,8 @@ public class Reports<E> implements ObservableList<E> {
 			}
 			queryResult.setDocuments(documents);
 			
-			for (FacetResult facetResult : queryResult.getFacetsCollector().getFacetResults()) {
-				if (outputDebugInfo) {
+			if (outputDebugInfo) {
+				for (FacetResult facetResult : queryResult.getFacetsCollector().getFacetResults()) {
 					for (FacetResultNode node0 : facetResult.getFacetResultNode().subResults) {
 						if (node0.label.toString().indexOf(",") == -1) {
 							System.out.println(node0.label + ": " + node0.value);
