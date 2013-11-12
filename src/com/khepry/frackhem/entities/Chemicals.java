@@ -93,6 +93,13 @@ public class Chemicals<E> implements ObservableList<E> {
 
 	List<Document> documents = new ArrayList<>();
 	
+	private IndexReader indexReader;
+	private IndexSearcher indexSearcher;
+	private Analyzer analyzer;
+	private TaxonomyReader taxonomyReader;
+	
+	private Boolean initialized = Boolean.FALSE;
+	
 	public Chemicals() {
 		
 	}
@@ -100,6 +107,83 @@ public class Chemicals<E> implements ObservableList<E> {
 	public Chemicals(
 			List<Document> documents) {
 		loadViaDocuments(documents);
+	}
+	
+	public QueryResult initialize(
+			String indexFolderPath,
+			String taxonomyFolderPath)
+	{
+		QueryResult queryResult = new QueryResult();
+		
+		String message = "";
+		
+		File indexFolder = new File(indexFolderPath);
+		if (!indexFolder.exists()) {
+			message = "Index path does not exist: " + indexFolderPath;
+			queryResult.setNotValid(true);
+			queryResult.setMessage(message);
+			if (outputToSystemErr) {
+				System.err.println(message);
+			}
+			if (outputToMsgQueue) {
+				progressMessageQueue.send(new MessageInput(message));
+			}
+		}
+
+		File taxonomyFolder = new File(taxonomyFolderPath);
+		if (!taxonomyFolder.exists()) {
+			message = "Taxonomy path does not exist: " + taxonomyFolderPath;
+			queryResult.setNotValid(true);
+			queryResult.setMessage(message);
+			if (outputToSystemErr) {
+				System.err.println(message);
+			}
+			if (outputToMsgQueue) {
+				progressMessageQueue.send(new MessageInput(message));
+			}
+		}
+
+		if (indexFolder.exists() && taxonomyFolder.exists()) {
+			try {
+				indexReader = DirectoryReader.open(FSDirectory.open(indexFolder));
+				indexSearcher = new IndexSearcher(indexReader);
+				analyzer = new StandardAnalyzer(Version.LUCENE_44);
+				taxonomyReader = new DirectoryTaxonomyReader(FSDirectory.open(taxonomyFolder));
+				initialized = true;
+			} catch (IOException e) {
+				message = e.getMessage();
+				if (outputToSystemErr) {
+					System.err.println(message);
+				}
+				if (outputToMsgQueue) {
+					progressMessageQueue.send(new MessageInput(message));
+				}
+			}
+		}
+		
+		return queryResult;
+	}
+	
+	public void terminate() {
+		if (analyzer != null) {
+			analyzer.close();
+		}
+		try {
+			if (indexReader != null) {
+				indexReader.close();
+			}
+			if (taxonomyReader != null) {
+				taxonomyReader.close();
+			}
+		} catch (IOException e) {
+			String message = e.getMessage();
+			if (outputToSystemErr) {
+				System.err.println(message);
+			}
+			if (outputToMsgQueue) {
+				progressMessageQueue.send(new MessageInput(message));
+			}
+		}
 	}
 	
 	public void loadViaDocuments(List<Document> documents) {
@@ -345,6 +429,98 @@ public class Chemicals<E> implements ObservableList<E> {
 		}
 	}
 
+	public QueryResult facetViaLucene(
+			String queryField,
+			String queryValue,
+			Integer maxDocs,
+			String sortOrder,
+			Boolean allowLeadingWildcard) throws IOException, ParseException {
+		
+		QueryResult queryResult = new QueryResult();
+		
+		list.clear();
+		documents.clear();
+		
+		String message;
+		
+		String[] sortColumns = sortOrder.split(",");
+
+		if (!initialized) {
+			queryResult = initialize(indexFolderPath, taxonomyFolderPath);
+		}
+		
+		if (!queryResult.isNotValid() && !queryValue.equals("")) {
+			QueryParser parser = new QueryParser(Version.LUCENE_44,	queryField, analyzer);
+			parser.setAllowLeadingWildcard(allowLeadingWildcard);
+			Query query = parser.parse(queryValue);
+			SortField[] sortFields = new SortField[sortColumns.length];
+			String[] pieces;
+			for (int i = 0; i < sortColumns.length; i++) {
+				pieces = sortColumns[i].split(":");
+				if (pieces.length > 1) {
+					switch (pieces[1].toLowerCase()) {
+					case "integer":
+						sortFields[i] = new SortField(sortColumns[i], SortField.Type.INT);
+						break;
+					default:
+						sortFields[i] = new SortField(sortColumns[i], SortField.Type.STRING);
+						break;
+					}
+				} else {
+					sortFields[i] = new SortField(sortColumns[i], SortField.Type.STRING);
+				}
+			}
+			Sort sort = new Sort(sortFields);
+			queryResult.setTopFieldCollector(TopFieldCollector.create(sort, maxDocs, true, false, false, false));
+
+			List<FacetRequest> facetRequests = new ArrayList<>();
+			facetRequests.add(new CountFacetRequest(new CategoryPath("toxRecognized", "CasEdfId"), 200));
+			facetRequests.add(new CountFacetRequest(new CategoryPath("toxRecognized", "Toxicity"), 200));
+			facetRequests.add(new CountFacetRequest(new CategoryPath("toxSuspected", "CasEdfId"), 200));
+			facetRequests.add(new CountFacetRequest(new CategoryPath("toxSuspected", "Toxicity"), 200));
+			FacetSearchParams facetSearchParams = new FacetSearchParams(facetRequests);
+			queryResult.setFacetsCollector(FacetsCollector.create(facetSearchParams, indexReader, taxonomyReader));
+			
+			indexSearcher.search(query, MultiCollector.wrap(queryResult.getTopFieldCollector(), queryResult.getFacetsCollector()));
+
+//			List<Document> documents = new ArrayList<>();
+//			for (ScoreDoc scoreDoc : queryResult.getTopFieldCollector().topDocs().scoreDocs) {
+//				Document document = indexSearcher.doc(scoreDoc.doc);
+//				documents.add(document);
+//				Chemical chemical = new Chemical(document);
+//				list.add((E)chemical);
+//				if (outputDebugInfo) {
+//					for (IndexableField field : document.getFields()) {
+//						System.out.print(field.stringValue());
+//						System.out.print("\t");
+//					}
+//					System.out.println();
+//				}
+//			}
+//			queryResult.setDocuments(documents);
+			
+			if (outputDebugInfo) {
+				for (FacetResult facetResult : queryResult.getFacetsCollector().getFacetResults()) {
+					for (FacetResultNode node0 : facetResult.getFacetResultNode().subResults) {
+						if (node0.label.toString().indexOf("/Toxicity/") > -1) {
+							if (node0.label.toString().indexOf(",") == -1) {
+								System.out.println(node0.label + ": " + node0.value);
+							}
+						}
+						else {
+							System.out.println(node0.label + ": " + node0.value);
+						}
+	//					for (FacetResultNode node1 : node0.subResults) {
+	//						System.out.println(node1.label + ": " + node1.value);
+	//					}
+					}
+				}
+			}
+		}
+		
+		return queryResult;
+	}
+
 	public QueryResult queryViaLucene(
 			String queryField,
 			String queryValue,
@@ -483,6 +659,7 @@ public class Chemicals<E> implements ObservableList<E> {
 
 	public void setIndexFolderPath(String indexFolderPath) {
 		this.indexFolderPath = indexFolderPath;
+		initialized = false;
 	}
 
 	public String getIndexFields() {
@@ -507,6 +684,7 @@ public class Chemicals<E> implements ObservableList<E> {
 
 	public void setTaxonomyFolderPath(String taxonomyFolderPath) {
 		this.taxonomyFolderPath = taxonomyFolderPath;
+		initialized = false;
 	}
 
 	public Integer getProgressInterval() {
