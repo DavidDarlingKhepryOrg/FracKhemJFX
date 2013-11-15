@@ -624,7 +624,7 @@ public class Reports<E> implements ObservableList<E> {
 			queryResult = initialize(indexFolderPath, taxonomyFolderPath);
 		}
 		
-		if (!queryResult.isNotValid()) {
+		if (!queryResult.isNotValid() && !queryValue.equals("")) {
 			QueryParser parser = new QueryParser(Version.LUCENE_44,	queryField, analyzer);
 			parser.setAllowLeadingWildcard(allowLeadingWildcard);
 			Query query = parser.parse(queryValue);
