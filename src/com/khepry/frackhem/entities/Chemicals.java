@@ -108,6 +108,7 @@ public class Chemicals<E> implements ObservableList<E> {
 			List<Document> documents) {
 		loadViaDocuments(documents);
 	}
+
 	
 	public QueryResult initialize(
 			String indexFolderPath,
@@ -163,6 +164,7 @@ public class Chemicals<E> implements ObservableList<E> {
 		
 		return queryResult;
 	}
+
 	
 	public void terminate() {
 		if (analyzer != null) {
@@ -537,34 +539,11 @@ public class Chemicals<E> implements ObservableList<E> {
 		
 		String[] sortColumns = sortOrder.split(",");
 
-		File indexFolder = new File(indexFolderPath);
-		if (!indexFolder.exists()) {
-			message = "Index path does not exist: " + indexFolderPath;
-			if (outputToSystemErr) {
-				System.err.println(message);
-			}
-			if (outputToMsgQueue) {
-				progressMessageQueue.send(new MessageInput(message));
-			}
-			return queryResult;
+		if (!initialized) {
+			queryResult = initialize(indexFolderPath, taxonomyFolderPath);
 		}
-
-		File taxonomyFolder = new File(taxonomyFolderPath);
-		if (!taxonomyFolder.exists()) {
-			message = "Taxonomy path does not exist: " + indexFolderPath;
-			if (outputToSystemErr) {
-				System.err.println(message);
-			}
-			if (outputToMsgQueue) {
-				progressMessageQueue.send(new MessageInput(message));
-			}
-			return queryResult;
-		}
-
-		if (indexFolder.exists() && taxonomyFolder.exists()) {
-			IndexReader indexReader = DirectoryReader.open(FSDirectory.open(indexFolder));
-			IndexSearcher indexSearcher = new IndexSearcher(indexReader);
-			Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_44);
+		
+		if (!queryResult.isNotValid() && !queryValue.equals("")) {
 			QueryParser parser = new QueryParser(Version.LUCENE_44,	queryField, analyzer);
 			parser.setAllowLeadingWildcard(allowLeadingWildcard);
 			Query query = parser.parse(queryValue);
@@ -588,7 +567,6 @@ public class Chemicals<E> implements ObservableList<E> {
 			Sort sort = new Sort(sortFields);
 			queryResult.setTopFieldCollector(TopFieldCollector.create(sort, maxDocs, true, false, false, false));
 
-			TaxonomyReader taxonomyReader = new DirectoryTaxonomyReader(FSDirectory.open(taxonomyFolder));
 			List<FacetRequest> facetRequests = new ArrayList<>();
 			facetRequests.add(new CountFacetRequest(new CategoryPath("toxRecognized", "CasEdfId"), 200));
 			facetRequests.add(new CountFacetRequest(new CategoryPath("toxRecognized", "Toxicity"), 200));
@@ -615,8 +593,8 @@ public class Chemicals<E> implements ObservableList<E> {
 			}
 			queryResult.setDocuments(documents);
 			
-			for (FacetResult facetResult : queryResult.getFacetsCollector().getFacetResults()) {
-				if (outputDebugInfo) {
+			if (outputDebugInfo) {
+				for (FacetResult facetResult : queryResult.getFacetsCollector().getFacetResults()) {
 					for (FacetResultNode node0 : facetResult.getFacetResultNode().subResults) {
 						if (node0.label.toString().indexOf("/Toxicity/") > -1) {
 							if (node0.label.toString().indexOf(",") == -1) {
@@ -632,10 +610,6 @@ public class Chemicals<E> implements ObservableList<E> {
 					}
 				}
 			}
-			
-			analyzer.close();
-			indexReader.close();
-			taxonomyReader.close();
 		}
 		
 		return queryResult;

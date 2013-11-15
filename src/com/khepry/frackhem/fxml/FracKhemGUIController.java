@@ -109,6 +109,7 @@ public class FracKhemGUIController {
     
 	private Integer maxToxicities = 10000;
 
+	private Blendeds<Blended> blendeds = new Blendeds<>();
 	private Chemicals<Chemical> chemicals = new Chemicals<>();
 	private Reports<Report> reports = new Reports<>();
 	private Toxicities<Toxicity> toxicities = new Toxicities<>();
@@ -352,6 +353,16 @@ public class FracKhemGUIController {
         }
         // bind the width of the accordionPanel to the width of the scrollPane
         accordionFacets.prefWidthProperty().bind(scrollPaneFacets.widthProperty());
+        
+        // listen for changes to TextField0's text
+        txtFieldQueryText0.textProperty().addListener(new ChangeListener<String>() {
+
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				txtFieldQueryText0_onChange(null);
+			}
+        	
+        });
         
         // listen for changes to TextField1's text
         txtFieldQueryText1.textProperty().addListener(new ChangeListener<String>() {
@@ -857,6 +868,51 @@ public class FracKhemGUIController {
 				break;
 			}
 			tblViewQueryResults0.getItems().clear();
+			// populate the query table with data
+			tblViewQueryResults0.setItems(blendeds);
+			// add the table column headers
+			tblViewQueryResults0.getColumns().setAll(blendeds.getTableColumns());
+			// clear the toxicity facets table view
+			tblViewFacetsToxicities0.getItems().clear();
+			// populate the toxicity facet table with data
+			ToxicityFacetRows<?> toxicityFacetRows = new ToxicityFacetRows<>();
+			toxicityFacetRows.loadViaFacetResults(queryResult.getFacetResults());
+			tblViewFacetsToxicities0.setItems(toxicityFacetRows);
+			// add the toxicity table column headers
+			tblViewFacetsToxicities0.getColumns().setAll(toxicityFacetRows.getTableColumns());
+		} catch (IOException | ParseException e) {
+			e.printStackTrace(System.err);
+		}
+		stage.getScene().setCursor(Cursor.DEFAULT);
+    }
+
+    
+    @FXML
+    private void txtFieldQueryText0_onChange(ActionEvent event) {
+		String indexFolderPath = "indexes/blendeds";
+		String taxonomyFolderPath = "taxonomies/blendeds";
+		String queryField = "text";
+		String queryValue = txtFieldQueryText0.getText().trim();
+		stage.getScene().setCursor(Cursor.WAIT);
+		try {
+			Boolean allowLeadingWildcard = Boolean.FALSE;
+			String sortOrder = "rptPdfSeqId,chmRow:Integer";
+			Integer maxDocs = 50000;
+			blendeds.setIndexFolderPath(indexFolderPath);
+			blendeds.setTaxonomyFolderPath(taxonomyFolderPath);
+			QueryResult queryResult = blendeds.facetViaLucene(queryField, queryValue, maxDocs, sortOrder, allowLeadingWildcard);
+			txtFieldQueryStat0.setText(queryResult.getCommentary());
+			// build the table column headers
+			List<TableColumn<Map<?,?>,String>> dataColumns = new ArrayList<>();
+			for (org.apache.lucene.document.Document document : queryResult.getDocuments()) {
+				for (IndexableField field : document.getFields()) {
+					TableColumn<Map<?,?>,String> dataColumn = new TableColumn<>(field.name());
+					dataColumn.setCellValueFactory(new MapValueFactory(field.name()));
+					dataColumn.setSortable(true);
+					dataColumns.add(dataColumn);
+				}
+				break;
+			}
 			// populate the query table with data
 			tblViewQueryResults0.setItems(blendeds);
 			// add the table column headers
